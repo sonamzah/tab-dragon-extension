@@ -1,0 +1,27 @@
+{
+  "name": "tab-dragon-extension",
+  "version": "1.0.0",
+  "description": "Chrome extension to save collections of tabs",
+  "main": "popup.html",
+  "scripts": {
+    "start": "parcel popup.html",
+    "build": "parcel build index.html --dist-dir ./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://sonamzah:sm287Dance@github.com/sonamzah/tab-dragon-extension.git"
+  },
+  "author": "Sonam Zahrt-Tenzin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sonamzah/tab-dragon-extension/issues"
+  },
+  "homepage": "https://github.com/sonamzah/tab-dragon-extension#readme",
+  "dependencies": {
+    "core-js": "^3.8.3",
+    "regenerator-runtime": "^0.13.7"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.0-beta.1"
+  }
+}

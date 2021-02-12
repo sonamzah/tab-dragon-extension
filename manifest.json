@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+
+  "name": "Tab Dragon Extension",
+  "description": "This extension will save collections of tabs for later consumption",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "./src/img/dragon32x32.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["activeTab", "tabs"]
+}
