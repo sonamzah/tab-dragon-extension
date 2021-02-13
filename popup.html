@@ -5,9 +5,49 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="src/css/main.css" />
-    <script defer src="src/js/popup.js"></script>
+    <!-- <script defer src="src/js/popup.js"></script> -->
+    <script defer type="module" src="src/js/popup.js"></script>
 
     <title>Tab Dragon Extension</title>
   </head>
-  <body></body>
+  <body>
+    <div class="container">
+      <header class="header">
+        <nav class="nav vertical-center">
+          <ul>
+            <li class="nav__item">
+              <!--TODO: change the dots dot class to nav button? -->
+              <button class="dots__dot" data-slide="${i}"></button>
+            </li>
+            <li class="nav__item">
+              <button class="dots__dot" data-slide="${i}"></button>
+            </li>
+          </ul>
+        </nav>
+      </header>
+
+      <div class="collections-save-menu">
+        <div class="save-buttons">
+          <div class="vert-element">
+            <button class="btn--save btn--save-window">
+              <p>Entire Window</p>
+            </button>
+          </div>
+          <div class="vert-element">
+            <button class="btn--save btn--save-tabs"><p>Select tabs</p></button>
+          </div>
+          <div class="vert-element">
+            <button class="btn--save btn--save-url"><p>Save by URL</p></button>
+          </div>
+        </div>
+      </div>
+      <div class="collections-display-menu"></div>
+
+      <footer class="footer">
+        <div class="manage--options vertical-center">
+          <a class="manage__link" href="#">View & Manage Collections</a>
+        </div>
+      </footer>
+    </div>
+  </body>
 </html>

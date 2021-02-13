@@ -1,11 +1,11 @@
 {
   "name": "tab-dragon-extension",
   "version": "1.0.0",
-  "description": "Chrome extension to save collections of tabs",
+  "description": "Chrome extension to save tabs",
   "main": "popup.html",
   "scripts": {
     "start": "parcel popup.html",
-    "build": "parcel build index.html --dist-dir ./dist"
+    "build": "parcel build popup.html --dist-dir ./dist"
   },
   "repository": {
     "type": "git",
@@ -17,11 +17,20 @@
     "url": "https://github.com/sonamzah/tab-dragon-extension/issues"
   },
   "homepage": "https://github.com/sonamzah/tab-dragon-extension#readme",
+  "devDependencies": {
+    "@parcel/optimizer-cssnano": "^2.0.0-nightly.587",
+    "@parcel/optimizer-htmlnano": "^2.0.0-nightly.587",
+    "@parcel/packager-css": "^2.0.0-nightly.587",
+    "@parcel/packager-html": "^2.0.0-nightly.587",
+    "@parcel/transformer-css": "^2.0.0-nightly.587",
+    "@parcel/transformer-html": "^2.0.0-nightly.587",
+    "@parcel/transformer-postcss": "^2.0.0-nightly.587",
+    "@parcel/transformer-posthtml": "^2.0.0-nightly.587",
+    "parcel": "^2.0.0-nightly.585",
+    "postcss": "^8.2.6"
+  },
   "dependencies": {
     "core-js": "^3.8.3",
     "regenerator-runtime": "^0.13.7"
-  },
-  "devDependencies": {
-    "parcel": "^2.0.0-beta.1"
   }
 }
