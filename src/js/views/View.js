@@ -6,7 +6,7 @@ export default class View {
 
   render(data, render = true) {
     if (!data || (Array.isArray(data) && data.length === 0))
-      return console.log("error rendering");
+      return console.log('error rendering');
     //   return this.renderError();
 
     this._data = data;
@@ -18,7 +18,7 @@ export default class View {
     // Clear old content
     this._clear();
     // Add markup that was just made
-    this._parentElement.insertAdjacentHTML("afterbegin", markup);
+    this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
   renderMessage(message) {
@@ -28,6 +28,6 @@ export default class View {
   }
 
   _clear() {
-    this._parentElement.innerHTML = "";
+    this._parentElement.innerHTML = '';
   }
 }

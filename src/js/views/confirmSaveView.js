@@ -3,18 +3,20 @@
 
 // import { mark } from "regenerator-runtime";
 import View from './View.js';
+import { getDomain } from '../helpers.js';
 
 class confirmSaveView extends View {
   _parentElement = document.querySelector('.collections-save-menu');
   _data;
 
-  //   handleSaveWindow(handler) {
-  //     this._parentElement.addEventListener("click", function (e) {
-  //       if (!e.target.classList.contains("btn--save-window")) return;
-  //       handler();
-  //       //   this._clear();
-  //     });
-  //   }
+  handleConfirmSave(handler) {
+    this._parentElement.addEventListener('click', function (e) {
+      if (!e.target.classList.contains('btn--save-window')) return;
+      handler();
+      //   this._clear();
+    });
+  }
+  handleDeleteTab(handler) {}
 
   _generateMarkupTab(url) {
     // console.log("this._data");
@@ -33,11 +35,19 @@ class confirmSaveView extends View {
 
     const markup = `
         <li class="tab--item">
-          <p class="tab--url inline-element">${url}</p>
-          <button class="btn--confirm-delete inline-element">&times;</button>
+          <span title="${url}"><a class="tab--url inline-element" href="${url}">${getDomain(
+      url
+    )}</a></span>
+          <button class="btn--confirm-delete-tab inline-element">&times;</button>
         </li>
         `;
-    console.log(markup);
+    // `<li class="tab--item">
+    //       <a class="tab--url inline-element" href="${url}" title="${url}">${getDomain(
+    //   url
+    // )}</a>
+    //       <button class="btn--confirm-delete inline-element">&times;</button>
+    //     </li>
+    //     `;
 
     return markup;
   }
@@ -46,7 +56,9 @@ class confirmSaveView extends View {
     <ul class="tabs--confirm-save">
         ${this._data.map(tab => this._generateMarkupTab(tab.url)).join('')}
     </ul>
-        `;
+    <div class="form--confirm-save">
+        <p>confirm</p>
+    </div>`;
   }
 }
 
