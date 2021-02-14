@@ -1,24 +1,32 @@
 /**
  * POPUP.js IS the 'CONTROLLER'
  */
+import * as model from "./model.js";
+import confirmSaveView from "./views/confirmSaveView.js";
 import saverView from "./views/saverView.js";
 
-const allTabsFromWindow = function () {
-  alert("dubai");
-  return 23;
-  //   return chrome.tabs.query(
-  //     { windowId: chrome.windows.WINDOW_ID_CURRENT },
-  //     (tabs) => tabs
-  //   );
-};
+const controlSaveWindow = async function () {
+  //   const data = allTabsFromWindow();
+  try {
+    await model.allTabsFromWindow();
 
-const controlSaveWindow = function () {
-  const data = allTabsFromWindow();
-  console.log(data);
+    // const markup = await confirmSaveView.generateMarkup(
+    //   model.state.selectedTabs.tabsArr
+    // );
+    // console.log(markup);
+    // model.state.selectedTabs.tabsArr;
+    confirmSaveView.render(model.state.selectedTabs.tabsArr);
+
+    //   model.allTabsFromWindow();
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const init = function () {
   //   saverView.message();
   saverView.handleSaveWindow(controlSaveWindow);
+  //   saverView.handleSaveSelectTabs(handler);
+  //   saverView.handleSaveByUrl(controlSaveWindow);
 };
 init();

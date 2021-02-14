@@ -1,7 +1,7 @@
 body {
   /* *SET DIMENSIONS OF POPUP* */
-  /* width: 400px;
-  height: 320px; */
+  width: 400px;
+  height: 320px;
   margin: 0;
 }
 .container {
@@ -43,7 +43,7 @@ body {
   /* box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.7); */
 }
 .collections-save-menu {
-  padding: 3rem 0;
+  padding: 0rem 0;
 }
 .save-buttons {
   text-align: center;
@@ -63,6 +63,26 @@ body {
   text-align: center;
 }
 
+.tabs--confirm-save {
+  /* margin-left: -2.3rem; */
+  padding: 0;
+  text-align: center;
+  margin: 0;
+  height: 300px;
+  overflow-y: auto;
+}
+.tabs--confirm-save li {
+  background-color: #f5f5f5;
+  padding: 1.3rem 0;
+  list-style: none;
+}
+.tabs--confirm-save li:hover {
+  background-color: #e9e9e9;
+}
+.btn--confirm-delete {
+  margin-left: 1rem;
+}
+/** FOOTER **/
 .footer {
   height: 8rem;
   background-color: aliceblue;
@@ -93,4 +113,8 @@ body {
 }
 .vert-element {
   display: block;
+}
+
+.inline-element {
+  display: inline;
 }

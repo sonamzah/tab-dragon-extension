@@ -1,26 +1,39 @@
 // import "core-js/stable";
 // import {} from "fractional";
 
-class SaverView {
-  _parentElement = document.querySelector(".collections-save-menu");
-  _data = [];
+import View from "./View.js";
 
-  message(message) {
-    alert(message);
-    console.log(this._parentElement.classList);
-    // document.write(`<h2>${this._parentElement}</h2>`);
-  }
+class SaverView extends View {
+  // class SaverView {
+  _parentElement = document.querySelector(".collections-save-menu");
 
   handleSaveWindow(handler) {
     this._parentElement.addEventListener("click", function (e) {
-      if (!e.target.classList.contains("btn--save-window")) return;
+      const btn = e.target.closest(".btn--save-window");
+      if (!btn) return;
       handler();
+      //   this._clear();
     });
   }
   //   handleSaveSelectTabs(handler) {}
   //   handleSaveByUrl(handler) {}
 
-  //   render(data) {}
+  _generateMarkUp() {
+    return `
+        <div class="save-buttons">
+          <div class="vert-element">
+            <button class="btn--save btn--save-window">
+              <p>Entire Window</p>
+            </button>
+          </div>
+          <div class="vert-element">
+            <button class="btn--save btn--save-tabs"><p>Select tabs</p></button>
+          </div>
+          <div class="vert-element">
+            <button class="btn--save btn--save-url"><p>Save by URL</p></button>
+          </div>
+        </div>`;
+  }
 }
 
 export default new SaverView();
