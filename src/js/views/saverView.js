@@ -1,15 +1,16 @@
 // import "core-js/stable";
 // import {} from "fractional";
 
-import View from "./View.js";
+import View from './View.js';
 
 class SaverView extends View {
   // class SaverView {
-  _parentElement = document.querySelector(".collections-save-menu");
+  _menuTitle = 'Save Menu';
+  _parentElement = document.querySelector('.collections-save-menu');
 
   handleSaveWindow(handler) {
-    this._parentElement.addEventListener("click", function (e) {
-      const btn = e.target.closest(".btn--save-window");
+    this._parentElement.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btn--save-window');
       if (!btn) return;
       handler();
       //   this._clear();

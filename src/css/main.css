@@ -27,7 +27,6 @@ body {
   display: inline-block;
   list-style: none;
 }
-
 .dots__dot {
   border: none;
   background-color: #b9b9b9;
@@ -42,6 +41,11 @@ body {
   /* Only necessary when overlying images */
   /* box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.7); */
 }
+
+.title--container {
+  text-align: center;
+}
+
 .collections-save-menu {
   /* position: relative; */
   padding: 0rem 0;
@@ -64,7 +68,7 @@ body {
   text-align: center;
 }
 
-.tabs--confirm-save {
+.list--preview {
   /* margin-left: -2.3rem; */
   padding: 0;
   text-align: center;
@@ -72,56 +76,110 @@ body {
   height: 300px;
   overflow-y: auto;
 }
-.tabs--confirm-save li {
+.list--preview li {
   background-color: #f5f5f5;
   padding: 1.3rem 0;
   list-style: none;
 }
-.tabs--confirm-save li:hover {
+.list--preview li:hover {
   background-color: #e9e9e9;
 }
-.tab--item a {
+.list--preview-item a {
   pointer-events: none;
   font-size: 1.05rem;
   text-decoration: none;
   color: rgb(36, 36, 36);
 }
-.tab--item a:hover {
+.list--preview-item a:hover {
   color: blueviolet;
 }
-.btn--confirm-delete-tab {
+.btn--delete {
   margin-left: 1rem;
 }
+
+/* .form--confirm-save:hover {
+  background-color: rgb(137, 243, 208);
+} */
+
+/** EXPERIMENTAL BETWEEN THESE POINTS*/
+/******************************/
 .form--confirm-save {
   text-align: center;
-  background-color: rgb(157, 252, 220);
+  display: flex;
+  /* padding-top: 0.05rem; */
+  padding-top: 0rem;
+  /* margin-top: 0rem; */
+  /* margin-top: 0.01rem; */
   /* height: 0px; */
   /* width: 100%; */
 }
-.form--confirm-save:hover {
-  background-color: rgb(137, 243, 208);
-}
-
-/* .form--confirm-save input {
+.form--confirm-save input {
+  flex: 1;
   text-align: center;
   height: 2rem;
-  width: 50%;
-  margin: auto;
+  border-width: 0;
+  background-color: transparent;
+  /* border-color: rgb(236, 236, 236); */
+  outline: none;
+  box-shadow: none;
+  /* margin-bottom: -0.1rem; */
+}
+
+.form--confirm-save input:focus,
+.form--confirm-save input:active {
+  background-color: #3131314f;
+  outline: none;
+  /* height: 2rem; */
+  box-shadow: none;
+  border-width: 0;
+  /* margin-bottom: -0.2rem; */
 }
 .btn--confirm-save {
-  width: 20%;
-  margin: auto;
-  height: 2rem;
-} */
-.form--confirm-save p {
-  font-size: 1.1rem;
-  font-weight: 400;
-  margin: 0;
-  padding: 1rem 0;
+  background-color: rgb(120, 250, 207);
+  border-width: 0.15rem;
+  border-color: rgb(120, 250, 207);
+  color: #3a3a3a;
+  flex: 0.5;
+  text-align: center;
+  height: 2.1rem;
+  /* padding-bottom: 0.13rem; */
+  border-style: solid;
+  border-width: 0;
+  /* margin-top: 0.01rem; */
+  /* padding-bottom: 0.3rem; */
 }
+
+.btn--confirm-save:hover {
+  background-color: rgb(7, 223, 151);
+  border-color: rgb(7, 223, 151);
+  color: #000000;
+}
+
+.btn--confirm-save:focus {
+  outline: none;
+
+  border-width: 0.15rem;
+  border-color: rgba(1, 43, 30, 0.774);
+}
+.btn--confirm-save:active {
+  outline: none;
+
+  border-width: 0.15rem;
+  border-color: rgba(1, 121, 83, 0.774);
+}
+.form--confirm-save p {
+  font-size: 1.05rem;
+  font-weight: 400;
+  margin: auto;
+  /* padding: auto; */
+}
+/******************************/
+/** EXPERIMENTAL BETWEEN THESE POINTS*/
+
 /** FOOTER **/
 .footer {
-  height: 8rem;
+  margin-top: 0;
+  height: 4rem;
   background-color: aliceblue;
 }
 .manage--options {
@@ -141,7 +199,7 @@ body {
 /******************/
 /** POSITIONING **/
 /******************/
-.vertical-center {
+.vertical-align {
   position: relative;
   top: 49%;
   transform: translateY(-50%);
@@ -154,4 +212,12 @@ body {
 
 .inline-element {
   display: inline;
+}
+
+/* HIDE! */
+.section--hidden {
+  /* opacity: 0;
+  transform: translateY(8rem); */
+  display: none;
+  /* height: 0; */
 }

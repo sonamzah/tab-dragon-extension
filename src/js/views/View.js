@@ -2,7 +2,18 @@
 // import {} from "fractional";
 
 export default class View {
+  _titleElement = document.querySelector('.title');
   _data;
+
+  hide() {
+    this?._parentElement.classList.add('section--hidden');
+    // return this;
+    return;
+  }
+  show() {
+    this?._parentElement.classList.remove('section--hidden');
+    return this;
+  }
 
   render(data, render = true) {
     if (!data || (Array.isArray(data) && data.length === 0))
@@ -15,10 +26,15 @@ export default class View {
 
     if (!render) return markup;
 
+    //change title menu -- (MAYBE CHANGE THIS TO PART OF EACH MENU)
+    this._titleElement.textContent = this?._menuTitle;
+
     // Clear old content
     this._clear();
     // Add markup that was just made
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
+
+    return this;
   }
 
   renderMessage(message) {

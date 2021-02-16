@@ -22,7 +22,7 @@
   <body>
     <div class="container">
       <header class="header">
-        <nav class="nav vertical-center">
+        <nav class="nav vertical-align">
           <ul>
             <li class="nav__item">
               <!--TODO: change the dots dot class to nav button? -->
@@ -34,6 +34,10 @@
           </ul>
         </nav>
       </header>
+
+      <div class="title--container">
+        <h3 class="title">Save menu</h3>
+      </div>
 
       <div class="collections-save-menu">
         <div class="save-buttons">
@@ -49,73 +53,42 @@
             <button class="btn--save btn--save-url"><p>Save by URL</p></button>
           </div>
         </div>
-        <!-- <ul class="tabs--confirm-save">
-          <li class="tab--item">
-            <p class="tab--url inline-element">test.url.com</p>
-            <button class="btn--confirm-delete-tab inline-element">
-              &times;
-            </button>
-          </li>
-          <li class="tab--item">
-            <p class="tab--url inline-element">test.url.com</p>
-            <button class="btn--confirm-delete-tab inline-element">
-              &times;
-            </button>
-          </li>
-          <li class="tab--item">
-            <p class="tab--url inline-element">test.url.com</p>
-            <button class="btn--confirm-delete-tab inline-element">
-              &times;
-            </button>
-          </li>
-          <li class="tab--item">
-            <p class="tab--url inline-element">test.url.com</p>
-            <button class="btn--confirm-delete-tab inline-element">
-              &times;
-            </button>
-          </li>
-          <li class="tab--item">
-            <p class="tab--url inline-element">test.url.com</p>
-            <button class="btn--confirm-delete-tab inline-element">
-              &times;
-            </button>
-          </li>
-          <li class="tab--item">
-            <p class="tab--url inline-element">test.url.com</p>
-            <button class="btn--confirm-delete-tab inline-element">
-              &times;
-            </button>
-          </li>
-          <li class="tab--item">
-            <p class="tab--url inline-element">test.url.com</p>
-            <button class="btn--confirm-delete-tab inline-element">
-              &times;
-            </button>
-          </li>
-          <li class="tab--item">
-            <p class="tab--url inline-element">test.url.com</p>
-            <button class="btn--confirm-delete-tab inline-element">
-              &times;
-            </button>
-          </li>
-          <li class="tab--item">
-            <p class="tab--url inline-element">test.url.com</p>
-            <button class="btn--confirm-delete-tab inline-element">
+        <!-- <ul class="tabs--confirm-save list--preview">
+          <li class="tab--item list--preview-item">
+            <p class="tab--url list--preview-item__text inline-element">test.url.com</p>
+            <button class="btn--delete btn--delete-tab inline-element">
               &times;
             </button>
           </li>
         </ul>
-        <div class="form--confirm-save">
-          <p>Confirm</p>
-        </div> -->
-        <!-- <form class="">
-          <input type="text" class="" name="" id="" placeholder="fuck"/>
+        <form class="form--confirm-save">
+          <input
+            type="text"
+            class="name--confirm-save"
+            name=""
+            id=""
+            placeholder=""
+          />
+          <div class="btn--confirm-save">
+            <p class="vertical-align">Save Collection!</p>
+          </div>
         </form> -->
       </div>
-      <div class="collections-display-menu"></div>
+      <div class="collections-display-menu section--hidden">
+        <!-- <ul class="collections--display list--preview">
+          <li class="collection--item list--preview-item">
+            <p class="collection--name list--preview-item__text inline-element">
+              test.url.com
+            </p>
+            <button class="btn--delete btn--delete-collection inline-element">
+              &times;
+            </button>
+          </li>
+        </ul> -->
+      </div>
 
       <footer class="footer">
-        <div class="manage--options vertical-center">
+        <div class="manage--options vertical-align">
           <a class="manage__link" href="#">View & Manage Collections</a>
         </div>
       </footer>
