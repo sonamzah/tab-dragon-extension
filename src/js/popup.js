@@ -6,6 +6,14 @@ import saverView from './views/saverView.js';
 import confirmSaveView from './views/confirmSaveView.js';
 import displayCollectionsView from './views/displayCollectionsView.js';
 
+const controlOpenPopup = async function () {
+  try {
+    model.updateState();
+  } catch (err) {
+    console.log(`💥👾💥 Control Open Popup: ${err.message}`);
+  }
+};
+
 const controlSaveByWindow = async function () {
   try {
     // 1. Put tabs' urls in model.state
@@ -46,6 +54,7 @@ const controlConfirmSave = async function () {
 
 const init = function () {
   //   saverView.message();
+  saverView.handleOpenPopup(controlOpenPopup);
   saverView.handleSaveWindow(controlSaveByWindow);
   //   saverView.handleSaveSelectTabs(handler);
   //   saverView.handleSaveByUrl(controlSaveWindow);
@@ -58,6 +67,7 @@ const init = function () {
   document.querySelector('.manage__link').addEventListener('click', checkGet);
 };
 
+//no longer needed
 const checkGet = async function () {
   try {
     //returns object of array of objects { [ {}, {}, {}, ... ] }

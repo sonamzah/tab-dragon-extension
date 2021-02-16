@@ -1,3 +1,4 @@
+// import { set } from 'core-js/fn/dict';
 import { setStorage, getStorage, clearSyncStorage } from './storage.js';
 
 export const state = {
@@ -8,12 +9,23 @@ export const state = {
     // byUrl: false,
     tabsArr: [],
   },
-  savedTabs: [],
+  collectionNames: [
+    {
+      name: 'pocket-rocker',
+      tags: [],
+      size: null,
+    },
+    {
+      name: 'rekcor-tekcop',
+      tags: [],
+      size: null,
+    },
+  ],
 };
 
 //*******RESET*STORAGE*******/
 //***************************/
-clearSyncStorage();
+// clearSyncStorage();
 //***************************/
 
 const changeTabUrl = function () {
@@ -50,7 +62,7 @@ export const allTabsFromWindow = function () {
 
 // Prunes the properties of the original tab object
 // so less data needs to be saved to chrome.storage.sync
-const createTabObject = function (tabData) {
+const createTabDataObj = function (tabData) {
   return {
     favIconUrl: tabData.favIconUrl,
     height: tabData.height,
@@ -63,15 +75,29 @@ const createTabObject = function (tabData) {
     windowId: tabData.windowId,
   };
 };
+const createCollectionDataObj = function (name, tags = []) {
+  if (!name)
+    return console.log('CreateCollectionDAtaObj -- Collection has no name wtf');
+  return {
+    name,
+    tags,
+    size: state.selectedTabs.tabsArr.length,
+  };
+};
 
 export const saveCollection = async function (name) {
   try {
-    state.savedTabs.push(name); //necessary for re-opening
+    // Get saved collection names from storage and update state
+
+    //save the name of the collection saved for access to display on load browser action
+    const collectionData = createCollectionDataObj(name);
+    // TODO ************
+    //********** */
+    state.collectionNames.push(collectionData);
+    await setStorage({ collectionNames: state.collectionNames });
 
     const { tabsArr } = state.selectedTabs;
-
-    const value = tabsArr.map(tab => createTabObject(tab));
-    console.log(value);
+    const value = tabsArr.map(tab => createTabDataObj(tab));
 
     // setStorage returns the name of the saved tabset/collection
     return await setStorage({ [name]: value }); // use computed property name [name]}
@@ -88,6 +114,33 @@ export const getCollection = async function (name) {
     return getStorage(name);
   } catch (err) {
     console.error(`💥 get collection:  ${err.message}`);
+    throw err;
+  }
+};
+
+export const getCollectionNames = async function () {
+  try {
+    return getStorage('collectionNames');
+  } catch (err) {
+    console.error(`💥 get collection names:  ${err.message}`);
+    throw err;
+  }
+};
+
+//source: https://levelup.gitconnected.com/different-ways-to-check-if-an-object-is-empty-in-javascript-e1252d1c0b34
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
+export const updateState = async function () {
+  try {
+    console.log('im loading!');
+    const { collectionNames } = await getStorage('collectionNames');
+    if (isEmpty(collectionNames)) return console.log('nothing in storage');
+
+    state.collectionNames = collectionNames;
+    console.log(state.collectionNames);
+  } catch (err) {
+    console.error(`💥 get collection names:  ${err.message}`);
     throw err;
   }
 };

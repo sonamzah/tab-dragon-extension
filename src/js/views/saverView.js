@@ -8,6 +8,10 @@ class SaverView extends View {
   _menuTitle = 'Save Menu';
   _parentElement = document.querySelector('.collections-save-menu');
 
+  handleOpenPopup(handler) {
+    window.addEventListener('load', handler);
+  }
+
   handleSaveWindow(handler) {
     this._parentElement.addEventListener('click', function (e) {
       const btn = e.target.closest('.btn--save-window');
