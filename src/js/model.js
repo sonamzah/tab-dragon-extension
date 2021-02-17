@@ -1,5 +1,6 @@
 // import { set } from 'core-js/fn/dict';
 import { setStorage, getStorage, clearSyncStorage } from './storage.js';
+import { isEmpty } from './helpers.js';
 
 export const state = {
   selectedTabs: {
@@ -87,12 +88,11 @@ const createCollectionDataObj = function (name, tags = []) {
 
 export const saveCollection = async function (name) {
   try {
-    // Get saved collection names from storage and update state
+    // State.collection names should be updated from chrome.storage on load
+    // so when saving in this function, the entire list of saved collection names is correctly updated
 
-    //save the name of the collection saved for access to display on load browser action
+    //1. save the name of the collection saved for access to display on load browser action
     const collectionData = createCollectionDataObj(name);
-    // TODO ************
-    //********** */
     state.collectionNames.push(collectionData);
     await setStorage({ collectionNames: state.collectionNames });
 
@@ -107,8 +107,10 @@ export const saveCollection = async function (name) {
   }
 };
 
-// NOTE :: This only returns one named collection at at time.
-//returns object of array of (tab) objects { [ {}, {}, {}, ... ] }
+///////////////////////////////////////////////////////////////////////////////////////////
+
+// NOTE :: This only returns one collection (by name) at at time.
+// Returns object of array of (tab) objects { [ {}, {}, {}, ... ] }
 export const getCollection = async function (name) {
   try {
     return getStorage(name);
@@ -127,20 +129,45 @@ export const getCollectionNames = async function () {
   }
 };
 
-//source: https://levelup.gitconnected.com/different-ways-to-check-if-an-object-is-empty-in-javascript-e1252d1c0b34
-function isEmpty(obj) {
-  return Object.keys(obj).length === 0;
-}
+// Returns array of urls from a collection's tab data
+export const getUrls = function (tabsData) {
+  return tabsData.map(tab => tab.url);
+};
+
+//Name is the key for data in storage
+export const openCollection = async function (name) {
+  try {
+    // 1. Use name to get collections tab data from storage.sync
+    const { [name]: tabsData } = await getCollection(name);
+    // 2. Extract urls from the stored tab data
+    const urlArray = getUrls(tabsData);
+    // 3. Create 'options' object with urlArray and other data stored @ save event
+    //TODO :: save and load more options about the window object!
+    // 4. Open window
+    //todo Promisify?
+    chrome.windows.create({ url: urlArray }, chromeWin => {
+      console.log('Opening worked!');
+      console.log(chromeWin);
+    });
+    return tabsData;
+  } catch (err) {
+    console.error(`💥 Open Collection:  ${err.message}`);
+    throw err;
+  }
+};
+
 export const updateState = async function () {
   try {
     console.log('im loading!');
-    const { collectionNames } = await getStorage('collectionNames');
-    if (isEmpty(collectionNames)) return console.log('nothing in storage');
+    const { collectionNames } = await getCollectionNames();
+    //TODO :: remove console.logs
+    if (!collectionNames || isEmpty(collectionNames))
+      return console.log('nothing in storage');
 
     state.collectionNames = collectionNames;
     console.log(state.collectionNames);
   } catch (err) {
-    console.error(`💥 get collection names:  ${err.message}`);
+    console.error(`💥 update state:  ${err.message}`);
     throw err;
   }
 };
@@ -174,3 +201,10 @@ export const updateState = async function () {
 // title: 'How to Create a Chrome Extension in 10 Minutes Flat - SitePoint';
 // url: 'https://www.sitepoint.com/create-chrome-extension-10-minutes-flat/';
 // windowId: 598;
+
+///////////////////////////////////
+
+// needed from first tab for window creation
+
+// height: 831;
+// width: 1680;

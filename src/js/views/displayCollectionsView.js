@@ -22,15 +22,25 @@ class displayCollectionsView extends View {
   //     //   this._clear();
   //   });
   // }
+  handleOpen(handler) {
+    this._parentElement.addEventListener('click', function (e) {
+      const collection = e.target.closest('.collection--item');
+      if (!collection) return;
+
+      console.log('inside handle open -- you clicked on collection:');
+      console.log(collection.dataset.name);
+
+      handler(collection.dataset.name);
+    });
+  }
 
   handleDeleteCollection(handler) {}
 
-  _generateMarkupCollection(url) {
+  _generateMarkupCollection(collection) {
+    const name = collection.name;
     const markup = `
-        <li class="collection--item list--preview-item">
-          <span title="${url}"><a class="collection-name list--preview-item__text inline-element" href="${url}">${getDomain(
-      url
-    )}</a></span>
+        <li class="collection--item list--preview-item" data-name="${name}">
+          <p class="collection-name list--preview-item__text inline-element">${name}</p><span class="collection-size" title=""> ${collection?.size}</span>
           <button class="btn--delete btn--delete-collection inline-element">&times;</button>
         </li>
         `;
@@ -41,7 +51,7 @@ class displayCollectionsView extends View {
     return `
     <ul class="collections--display list--preview">
         ${this._data
-          .map(tab => this._generateMarkupCollection(tab.url))
+          .map(collection => this._generateMarkupCollection(collection))
           .join('')}
     </ul>`;
   }

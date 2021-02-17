@@ -3,7 +3,8 @@
 
 // import { mark } from "regenerator-runtime";
 import View from './View.js';
-import { getDomain } from '../helpers.js';
+import { getDomain, truncToNumChars } from '../helpers.js';
+import { PREV_TITLE_LEN } from '../config.js';
 
 // TODO :: Make a parent class CollectionsSaveMenu view?
 class confirmSaveView extends View {
@@ -36,6 +37,7 @@ class confirmSaveView extends View {
 
   handleDeleteTab(handler) {}
 
+  // ${truncToNumChars( getDomain(url), PREV_TITLE_LEN)
   _generateMarkupTab(url) {
     const markup = `
         <li class="tab--item list--preview-item">

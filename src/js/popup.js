@@ -27,6 +27,7 @@ const controlSaveByWindow = async function () {
   }
 };
 
+//TODO: remove this
 let savename;
 
 const controlConfirmSave = async function () {
@@ -35,20 +36,34 @@ const controlConfirmSave = async function () {
     const name = confirmSaveView.getSaveName();
     if (!name) return alert('Please enter a name!');
 
+    // 1.1 check if collection name exists (otherwise it will override state)
+
     // 2. Save the current set of tabs to chrome.storage.sync
     const saved = await model.saveCollection(name);
     console.log(`saved name: ${saved}`);
 
+    //TODO: remove this too
     savename = saved;
 
     // 3. hide confirmSaveView + trigger display saved tabset/collection
     confirmSaveView.hide();
-    displayCollectionsView.render(model.state.selectedTabs.tabsArr).show();
+    displayCollectionsView.render(model.state.collectionNames).show();
+
     // 4. render success message in display menu
 
     //   todo: pick a phrase tab-set or tab collection and stick with it
   } catch (err) {
     console.log(`💥👾💥 ${err.message}`);
+  }
+};
+
+const controlOpenCollection = async function (name) {
+  try {
+    const tabsOpened = await model.openCollection(name);
+    console.log('tabs opened from controlOpenCollection');
+    console.log(tabsOpened);
+  } catch (err) {
+    console.error(`💥 Control Open Collection:  ${err.message}`);
   }
 };
 
@@ -59,23 +74,25 @@ const init = function () {
   //   saverView.handleSaveSelectTabs(handler);
   //   saverView.handleSaveByUrl(controlSaveWindow);
 
+  displayCollectionsView.handleOpen(controlOpenCollection);
+
   // register save button
   // using event delegation -- button doesnt exist at initialization
   confirmSaveView.handleConfirmSave(controlConfirmSave);
 
-  //this is just to test
-  document.querySelector('.manage__link').addEventListener('click', checkGet);
+  //TODO: this is just to
+  document.querySelector('.manage__link').addEventListener('click', checkOpen);
 };
 
 //no longer needed
-const checkGet = async function () {
+const checkOpen = async function () {
   try {
     //returns object of array of objects { [ {}, {}, {}, ... ] }
-    const results = await model.getCollection(savename);
-    console.log('results:');
+    const results = await model.openCollection(savename);
+    console.log('object to open:');
     return console.log(results);
   } catch (err) {
-    console.error(`💥👾💥 checkGet: ${err.message}`);
+    console.error(`💥👾💥 checkOpen: ${err.message}`);
   }
 };
 
