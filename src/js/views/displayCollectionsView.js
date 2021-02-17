@@ -6,7 +6,7 @@ import View from './View.js';
 import { getDomain } from '../helpers.js';
 
 // TODO :: Make a parent class CollectionsSaveMenu view?
-class displayCollectionsView extends View {
+class DisplayCollectionsView extends View {
   _menuTitle = 'My Collections';
   _parentElement = document.querySelector('.collections-display-menu');
 
@@ -57,4 +57,4 @@ class displayCollectionsView extends View {
   }
 }
 
-export default new displayCollectionsView();
+export default new DisplayCollectionsView();

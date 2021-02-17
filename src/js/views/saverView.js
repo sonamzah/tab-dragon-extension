@@ -23,7 +23,7 @@ class SaverView extends View {
   //   handleSaveSelectTabs(handler) {}
   //   handleSaveByUrl(handler) {}
 
-  _generateMarkUp() {
+  _generateMarkup() {
     return `
         <div class="save-buttons">
           <div class="vert-element">

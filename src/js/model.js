@@ -1,6 +1,7 @@
 // import { set } from 'core-js/fn/dict';
 import { setStorage, getStorage, clearSyncStorage } from './storage.js';
 import { isEmpty } from './helpers.js';
+// import { stat } from 'fs/promises';
 
 export const state = {
   selectedTabs: {
@@ -22,6 +23,29 @@ export const state = {
       size: null,
     },
   ],
+  currentUI: {
+    saverView: true,
+    confirmSaveView: false,
+    displayCollectionsView: false,
+  },
+};
+
+// Updates the currentUI state property, sets all to false except
+// for current UI passed in as a string argument
+export const updateCurrentUI = function (current) {
+  const currentUI = {
+    saverView: false,
+    confirmSaveView: false,
+    displayCollectionsView: false,
+  };
+  if (!Object.keys(currentUI).includes(current))
+    return console.error(
+      'updateCurrentUI wrong property name specified -- must be string' //TODO remove this later
+    );
+
+  currentUI[current] = true;
+  state.currentUI = currentUI;
+  return;
 };
 
 //*******RESET*STORAGE*******/

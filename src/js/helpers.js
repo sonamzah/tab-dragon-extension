@@ -20,3 +20,7 @@ export const truncToNumChars = function (str, length) {
 export const isEmpty = function (obj) {
   return Object.keys(obj).length === 0;
 };
+export const isString = function (val) {
+  if (typeof val === 'string' || val instanceof String) return true;
+  else return false;
+};

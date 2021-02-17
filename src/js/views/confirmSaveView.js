@@ -7,7 +7,7 @@ import { getDomain, truncToNumChars } from '../helpers.js';
 import { PREV_TITLE_LEN } from '../config.js';
 
 // TODO :: Make a parent class CollectionsSaveMenu view?
-class confirmSaveView extends View {
+class ConfirmSaveView extends View {
   _menuTitle = 'Confirm Tabs In Collection';
   _parentElement = document.querySelector('.collections-save-menu');
 
@@ -77,4 +77,4 @@ class confirmSaveView extends View {
   }
 }
 
-export default new confirmSaveView();
+export default new ConfirmSaveView();

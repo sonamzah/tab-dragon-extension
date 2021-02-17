@@ -2,9 +2,58 @@
  * POPUP.js IS the 'CONTROLLER'
  */
 import * as model from './model.js';
+import navigationView from './views/navigationView.js';
 import saverView from './views/saverView.js';
 import confirmSaveView from './views/confirmSaveView.js';
 import displayCollectionsView from './views/displayCollectionsView.js';
+
+import { isString } from './helpers.js';
+
+//TODO:: add and remove hide from appropriate
+const controlNav = function (direction) {
+  //   if (!isString(direction)) return;
+  console.log(direction);
+  if (direction === 'left') {
+    // current UI === saverView
+    if (model.state.currentUI.saverView) return;
+    // current UI === cinfirmSaveView
+    if (model.state.currentUI.confirmSaveView) {
+      alert('cancel save?');
+      saverView.render({});
+      model.updateCurrentUI('saverView'); //update state
+    }
+    // current UI === displayCollectionsView
+    if (model.state.currentUI.displayCollectionsView) {
+      saverView.render({});
+      model.updateCurrentUI('saverView'); //update state
+    }
+  }
+  if (direction === 'right') {
+    // current UI === saverView
+    if (model.state.currentUI.saverView) {
+      displayCollectionsView.render(model.state.collectionNames);
+      model.updateCurrentUI('displayCollectionsView'); //update state
+    }
+    // current UI === cinfirmSaveView
+    if (model.state.currentUI.confirmSaveView) {
+      alert('cancel save?');
+      displayCollectionsView.render(model.state.collectionNames);
+      model.updateCurrentUI('displayCollectionsView'); //update state
+    }
+    // current UI === displayCollectionsView
+    if (model.state.currentUI.displayCollectionsView) return;
+  }
+
+  // current UI === saverView
+  //    direction === 'left'
+  //    direction === 'right'
+  // current UI === cinfirmSaveView
+  //    direction === 'left'
+  //    direction === 'right'
+  // current UI === displayCollectionsView
+  //    direction === 'left'
+  //    direction === 'right'
+};
 
 const controlOpenPopup = async function () {
   try {
@@ -68,7 +117,8 @@ const controlOpenCollection = async function (name) {
 };
 
 const init = function () {
-  //   saverView.message();
+  navigationView.handleClickDot(controlNav);
+
   saverView.handleOpenPopup(controlOpenPopup);
   saverView.handleSaveWindow(controlSaveByWindow);
   //   saverView.handleSaveSelectTabs(handler);
