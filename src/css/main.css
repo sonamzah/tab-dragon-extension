@@ -41,6 +41,9 @@ body {
   /* Only necessary when overlying images */
   /* box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.7); */
 }
+.dark-dot {
+  background-color: #8d8d8d;
+}
 
 .title--container {
   text-align: center;

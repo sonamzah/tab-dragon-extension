@@ -12,10 +12,13 @@ import { isString } from './helpers.js';
 //Handles displayCollectionsView.hide() and reset confirmSaveView to saverView
 const goToSaverView = function () {
   if (model.state.currentUI.saverView) return;
-  //
+  if (model.state.currentUI.displayCollectionsView) {
+    navigationView.toggleDarkenDot();
+    displayCollectionsView.hide();
+  }
+  // No toggle darken needed if currentUI === confirm view
   confirmSaveView.hide();
-  displayCollectionsView.hide(); // Doesnt change if already hidden
-  //TODO -- technically no reason to render -- just show
+
   saverView.show();
   model.updateCurrentUI('saverView'); // Update state.currentUI
 };
@@ -29,7 +32,8 @@ const goToConfirmView = function () {
 //Handles saverView.hide() and confirmSaveView.hide()
 const goToDisplayView = function () {
   if (model.state.currentUI.displayCollectionsView) return;
-  //
+
+  navigationView.toggleDarkenDot(); // Change dark nav dot
   saverView.hide();
   confirmSaveView.hide();
   //todo:: add update method
@@ -49,47 +53,6 @@ const controlNav = function (direction) {
   if (direction === 'left') goToSaverView();
   if (direction === 'right') goToDisplayView();
 };
-
-// const controlNav = function (direction) {
-//   //   if (!isString(direction)) return;
-//   console.log(direction);
-//   if (direction === 'left') {
-//     // current UI === saverView
-//     if (model.state.currentUI.saverView) return;
-//     // current UI === confirmSaveView
-//     if (model.state.currentUI.confirmSaveView) {
-//       alert('cancel save?');
-//       goToSaverView();
-//     }
-//     // current UI === displayCollectionsView
-//     if (model.state.currentUI.displayCollectionsView) {
-//       goToSaverView();
-//     }
-//   }
-//   if (direction === 'right') {
-//     // current UI === saverView
-//     if (model.state.currentUI.saverView) {
-//       goToDisplayView();
-//     }
-//     // current UI === confirmSaveView
-//     if (model.state.currentUI.confirmSaveView) {
-//       alert('cancel save?');
-//       goToDisplayView();
-//     }
-//     // current UI === displayCollectionsView
-//     if (model.state.currentUI.displayCollectionsView) return;
-//   }
-
-//   // current UI === saverView
-//   //    direction === 'left'
-//   //    direction === 'right'
-//   // current UI === cinfirmSaveView
-//   //    direction === 'left'
-//   //    direction === 'right'
-//   // current UI === displayCollectionsView
-//   //    direction === 'left'
-//   //    direction === 'right'
-// };
 
 const controlOpenPopup = async function () {
   try {
