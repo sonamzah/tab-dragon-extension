@@ -8,8 +8,15 @@ import confirmSaveView from './views/confirmSaveView.js';
 import displayCollectionsView from './views/displayCollectionsView.js';
 
 import { isString } from './helpers.js';
-
+//*************************************** */
+//tODO TODODODODODODODODODODODDOOOOoooooooooooo
+//todo--------------------------------------------------
 //TODO:: add and remove hide from appropriate
+//todo:: set model.currentUI.confirmSaveView to true when its rendered
+//todo:: fill the dot to darker
+//todo:: figure out how to style the animated slide in
+//todo:: -------------------------------------------------------
+//**************************************** */
 const controlNav = function (direction) {
   //   if (!isString(direction)) return;
   console.log(direction);
