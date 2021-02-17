@@ -8,44 +8,56 @@ import confirmSaveView from './views/confirmSaveView.js';
 import displayCollectionsView from './views/displayCollectionsView.js';
 
 import { isString } from './helpers.js';
+
+//Handles displayCollectionsView.hide() and reset confirmSaveView to saverView
+const goToSaverView = function () {
+  displayCollectionsView.hide(); // Doesnt change if already hidden
+  saverView.render({}).show();
+  model.updateCurrentUI('saverView'); // Update state.currentUI
+};
+const goToConfirmView = function () {
+  confirmSaveView.render(model.state.selectedTabs.tabsArr);
+  model.updateCurrentUI('confirmSaveView'); // Update state.currentUI
+};
+//Handles saverView.hide() and confirmSaveView.hide()
+const goToDisplayView = function () {
+  saverView.hide();
+  displayCollectionsView.render(model.state.collectionNames).show();
+  model.updateCurrentUI('displayCollectionsView'); // Update state.currentUI
+};
+
 //*************************************** */
-//tODO TODODODODODODODODODODODDOOOOoooooooooooo
-//todo--------------------------------------------------
 //TODO:: add and remove hide from appropriate
 //todo:: set model.currentUI.confirmSaveView to true when its rendered
 //todo:: fill the dot to darker
 //todo:: figure out how to style the animated slide in
-//todo:: -------------------------------------------------------
 //**************************************** */
+
 const controlNav = function (direction) {
   //   if (!isString(direction)) return;
   console.log(direction);
   if (direction === 'left') {
     // current UI === saverView
     if (model.state.currentUI.saverView) return;
-    // current UI === cinfirmSaveView
+    // current UI === confirmSaveView
     if (model.state.currentUI.confirmSaveView) {
       alert('cancel save?');
-      saverView.render({});
-      model.updateCurrentUI('saverView'); //update state
+      goToSaverView();
     }
     // current UI === displayCollectionsView
     if (model.state.currentUI.displayCollectionsView) {
-      saverView.render({});
-      model.updateCurrentUI('saverView'); //update state
+      goToSaverView();
     }
   }
   if (direction === 'right') {
     // current UI === saverView
     if (model.state.currentUI.saverView) {
-      displayCollectionsView.render(model.state.collectionNames);
-      model.updateCurrentUI('displayCollectionsView'); //update state
+      goToDisplayView();
     }
-    // current UI === cinfirmSaveView
+    // current UI === confirmSaveView
     if (model.state.currentUI.confirmSaveView) {
       alert('cancel save?');
-      displayCollectionsView.render(model.state.collectionNames);
-      model.updateCurrentUI('displayCollectionsView'); //update state
+      goToDisplayView();
     }
     // current UI === displayCollectionsView
     if (model.state.currentUI.displayCollectionsView) return;
@@ -77,14 +89,11 @@ const controlSaveByWindow = async function () {
     await model.allTabsFromWindow();
 
     // 2. Render confirmation to save tab-set page
-    confirmSaveView.render(model.state.selectedTabs.tabsArr);
+    goToConfirmView();
   } catch (err) {
     console.log(err);
   }
 };
-
-//TODO: remove this
-let savename;
 
 const controlConfirmSave = async function () {
   try {
@@ -92,18 +101,14 @@ const controlConfirmSave = async function () {
     const name = confirmSaveView.getSaveName();
     if (!name) return alert('Please enter a name!');
 
-    // 1.1 check if collection name exists (otherwise it will override state)
+    //TODO 1.1 check if collection name exists (otherwise it will override state)
 
     // 2. Save the current set of tabs to chrome.storage.sync
     const saved = await model.saveCollection(name);
     console.log(`saved name: ${saved}`);
 
-    //TODO: remove this too
-    savename = saved;
-
-    // 3. hide confirmSaveView + trigger display saved tabset/collection
-    confirmSaveView.hide();
-    displayCollectionsView.render(model.state.collectionNames).show();
+    // 3. hide confirmSaveView + render display saved tabset/collection
+    goToDisplayView();
 
     // 4. render success message in display menu
 
@@ -136,21 +141,6 @@ const init = function () {
   // register save button
   // using event delegation -- button doesnt exist at initialization
   confirmSaveView.handleConfirmSave(controlConfirmSave);
-
-  //TODO: this is just to
-  document.querySelector('.manage__link').addEventListener('click', checkOpen);
-};
-
-//no longer needed
-const checkOpen = async function () {
-  try {
-    //returns object of array of objects { [ {}, {}, {}, ... ] }
-    const results = await model.openCollection(savename);
-    console.log('object to open:');
-    return console.log(results);
-  } catch (err) {
-    console.error(`💥👾💥 checkOpen: ${err.message}`);
-  }
 };
 
 init();
