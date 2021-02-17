@@ -11,68 +11,85 @@ import { isString } from './helpers.js';
 
 //Handles displayCollectionsView.hide() and reset confirmSaveView to saverView
 const goToSaverView = function () {
+  if (model.state.currentUI.saverView) return;
+  //
+  confirmSaveView.hide();
   displayCollectionsView.hide(); // Doesnt change if already hidden
-  saverView.render({}).show();
+  //TODO -- technically no reason to render -- just show
+  saverView.show();
   model.updateCurrentUI('saverView'); // Update state.currentUI
 };
 const goToConfirmView = function () {
-  confirmSaveView.render(model.state.selectedTabs.tabsArr);
+  if (model.state.currentUI.confirmSaveView) return;
+  //
+  saverView.hide(); //confirm view only accessable from saveView
+  confirmSaveView.render(model.state.selectedTabs.tabsArr).show();
   model.updateCurrentUI('confirmSaveView'); // Update state.currentUI
 };
 //Handles saverView.hide() and confirmSaveView.hide()
 const goToDisplayView = function () {
+  if (model.state.currentUI.displayCollectionsView) return;
+  //
   saverView.hide();
+  confirmSaveView.hide();
+  //todo:: add update method
   displayCollectionsView.render(model.state.collectionNames).show();
   model.updateCurrentUI('displayCollectionsView'); // Update state.currentUI
 };
 
 //*************************************** */
-//TODO:: add and remove hide from appropriate
-//todo:: set model.currentUI.confirmSaveView to true when its rendered
 //todo:: fill the dot to darker
 //todo:: figure out how to style the animated slide in
 //**************************************** */
-
 const controlNav = function (direction) {
   //   if (!isString(direction)) return;
   console.log(direction);
-  if (direction === 'left') {
-    // current UI === saverView
-    if (model.state.currentUI.saverView) return;
-    // current UI === confirmSaveView
-    if (model.state.currentUI.confirmSaveView) {
-      alert('cancel save?');
-      goToSaverView();
-    }
-    // current UI === displayCollectionsView
-    if (model.state.currentUI.displayCollectionsView) {
-      goToSaverView();
-    }
-  }
-  if (direction === 'right') {
-    // current UI === saverView
-    if (model.state.currentUI.saverView) {
-      goToDisplayView();
-    }
-    // current UI === confirmSaveView
-    if (model.state.currentUI.confirmSaveView) {
-      alert('cancel save?');
-      goToDisplayView();
-    }
-    // current UI === displayCollectionsView
-    if (model.state.currentUI.displayCollectionsView) return;
-  }
+  if (model.state.currentUI.confirmSaveView) alert('cancel save?');
 
-  // current UI === saverView
-  //    direction === 'left'
-  //    direction === 'right'
-  // current UI === cinfirmSaveView
-  //    direction === 'left'
-  //    direction === 'right'
-  // current UI === displayCollectionsView
-  //    direction === 'left'
-  //    direction === 'right'
+  if (direction === 'left') goToSaverView();
+  if (direction === 'right') goToDisplayView();
 };
+
+// const controlNav = function (direction) {
+//   //   if (!isString(direction)) return;
+//   console.log(direction);
+//   if (direction === 'left') {
+//     // current UI === saverView
+//     if (model.state.currentUI.saverView) return;
+//     // current UI === confirmSaveView
+//     if (model.state.currentUI.confirmSaveView) {
+//       alert('cancel save?');
+//       goToSaverView();
+//     }
+//     // current UI === displayCollectionsView
+//     if (model.state.currentUI.displayCollectionsView) {
+//       goToSaverView();
+//     }
+//   }
+//   if (direction === 'right') {
+//     // current UI === saverView
+//     if (model.state.currentUI.saverView) {
+//       goToDisplayView();
+//     }
+//     // current UI === confirmSaveView
+//     if (model.state.currentUI.confirmSaveView) {
+//       alert('cancel save?');
+//       goToDisplayView();
+//     }
+//     // current UI === displayCollectionsView
+//     if (model.state.currentUI.displayCollectionsView) return;
+//   }
+
+//   // current UI === saverView
+//   //    direction === 'left'
+//   //    direction === 'right'
+//   // current UI === cinfirmSaveView
+//   //    direction === 'left'
+//   //    direction === 'right'
+//   // current UI === displayCollectionsView
+//   //    direction === 'left'
+//   //    direction === 'right'
+// };
 
 const controlOpenPopup = async function () {
   try {
@@ -130,6 +147,7 @@ const controlOpenCollection = async function (name) {
 
 const init = function () {
   navigationView.handleClickDot(controlNav);
+  navigationView.handleArrowKey(controlNav);
 
   saverView.handleOpenPopup(controlOpenPopup);
   saverView.handleSaveWindow(controlSaveByWindow);

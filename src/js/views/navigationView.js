@@ -13,7 +13,14 @@ class NavigationView extends View {
       handler(slide);
     });
   }
-  handleArrowKey() {}
+  handleArrowKey(handler) {
+    window.addEventListener('keydown', function (e) {
+      console.log(e);
+      const key = e.key;
+      if (key === 'ArrowLeft') handler('left');
+      if (key === 'ArrowRight') handler('right');
+    });
+  }
   _generateMarkup() {}
 }
 export default new NavigationView();

@@ -9,7 +9,7 @@ import { PREV_TITLE_LEN } from '../config.js';
 // TODO :: Make a parent class CollectionsSaveMenu view?
 class ConfirmSaveView extends View {
   _menuTitle = 'Confirm Tabs In Collection';
-  _parentElement = document.querySelector('.collections-save-menu');
+  _parentElement = document.querySelector('.collections-confirm-menu');
 
   getSaveName() {
     const name = this._parentElement.querySelector('.name--confirm-save').value;
