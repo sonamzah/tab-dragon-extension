@@ -47,6 +47,8 @@ class DisplayCollectionsView extends View {
 
     return markup;
   }
+  //todo -- put outerhtml below into popup.html --
+  // todo git commit -> then pull from diff branch.. you moded msin
   _generateMarkup() {
     return `
     <ul class="collections--display list--preview">

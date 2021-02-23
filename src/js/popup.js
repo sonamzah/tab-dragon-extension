@@ -42,7 +42,6 @@ const goToDisplayView = function () {
 };
 
 //*************************************** */
-//todo:: fill the dot to darker
 //todo:: figure out how to style the animated slide in
 //**************************************** */
 const controlNav = function (direction) {
