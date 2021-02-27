@@ -3,59 +3,68 @@
  */
 import * as model from './model.js';
 import navigationView from './views/navigationView.js';
-import saverView from './views/saverView.js';
-import confirmSaveView from './views/confirmSaveView.js';
-import displayCollectionsView from './views/displayCollectionsView.js';
+import saveActionMenuView from './views/saveActionMenuView.js';
+import confirmSaveMenuView from './views/confirmSaveMenuView.js';
+import collectionsMenuView from './views/collectionsMenuView.js';
+
+import listTabView from './views/listTabView.js';
+import listCollectionView from './views/listCollectionView.js';
 
 import { isString } from './helpers.js';
 
-//Handles displayCollectionsView.hide() and reset confirmSaveView to saverView
-const goToSaverView = function () {
-  if (model.state.currentUI.saverView) return;
-  if (model.state.currentUI.displayCollectionsView) {
+//Handles collectionsMenuView.hide() and reset confirmSaveMenuView to saveActionMenuView
+const goToSaveActionMenu = function () {
+  // TODO :: change all current UI names to menu
+  if (model.state.currentUI.saveActionMenu) return;
+  if (model.state.currentUI.collectionsMenu) {
     navigationView.toggleDarkenDot();
-    displayCollectionsView.hide();
+    collectionsMenuView.hide();
   }
   // No toggle darken needed if currentUI === confirm view
-  confirmSaveView.hide();
+  confirmSaveMenuView.hide();
 
-  saverView.show();
-  model.updateCurrentUI('saverView'); // Update state.currentUI
+  saveActionMenuView.show();
+  model.updateCurrentUI('saveActionMenu'); // Update state.currentUI
 };
-const goToConfirmView = function () {
-  if (model.state.currentUI.confirmSaveView) return;
-  //
-  saverView.hide(); //confirm view only accessable from saveView
-  confirmSaveView.render(model.state.selectedTabs.tabsArr).show();
-  model.updateCurrentUI('confirmSaveView'); // Update state.currentUI
-};
-//Handles saverView.hide() and confirmSaveView.hide()
-const goToDisplayView = function () {
-  if (model.state.currentUI.displayCollectionsView) return;
+const goToConfirmMenu = function () {
+  if (model.state.currentUI.confirmMenu) return;
+  // 1. Hide save action menu
+  saveActionMenuView.hide(); //confirm view only accessable from saveView
 
+  // 2. Show the confirm save menu
+  confirmSaveMenuView.show();
+  model.updateCurrentUI('confirmMenu'); // Update state.currentUI
+};
+//Handles saveActionMenuView.hide() and confirmSaveMenuView.hide()
+const goToCollectionsMenu = function () {
+  if (model.state.currentUI.collectionsMenu) return;
+
+  //   console.dir(collectionsMenuView);
   navigationView.toggleDarkenDot(); // Change dark nav dot
-  saverView.hide();
-  confirmSaveView.hide();
+  saveActionMenuView.hide();
+  confirmSaveMenuView.hide();
   //todo:: add update method
-  displayCollectionsView.render(model.state.collectionNames).show();
-  model.updateCurrentUI('displayCollectionsView'); // Update state.currentUI
+  //   collectionsMenuView.render(model.state.collectionNames).show();
+  collectionsMenuView.show();
+  model.updateCurrentUI('collectionsMenu'); // Update state.currentUI
 };
 
-//*************************************** */
+//*************************************** */p [''''''''''''']
 //todo:: figure out how to style the animated slide in
 //**************************************** */
 const controlNav = function (direction) {
   //   if (!isString(direction)) return;
   console.log(direction);
-  if (model.state.currentUI.confirmSaveView) alert('cancel save?');
+  if (model.state.currentUI.confirmMenu) alert('cancel save?');
 
-  if (direction === 'left') goToSaverView();
-  if (direction === 'right') goToDisplayView();
+  if (direction === 'left') goToSaveActionMenu();
+  if (direction === 'right') goToCollectionsMenu();
 };
 
 const controlOpenPopup = async function () {
   try {
-    model.updateState();
+    await model.updateState();
+    listCollectionView.render(model.state.collectionNames); // Render collection list in collection menu
   } catch (err) {
     console.log(`💥👾💥 Control Open Popup: ${err.message}`);
   }
@@ -67,8 +76,11 @@ const controlSaveByWindow = async function () {
     // (Async call to chrome.tabs by model)
     await model.allTabsFromWindow();
 
-    // 2. Render confirmation to save tab-set page
-    goToConfirmView();
+    // 2. Render tab list -- posibly move this into the goToConfirm funct later when adding more saveBy features
+    listTabView.render(model.state.selectedTabs.tabsArr);
+
+    // 3. Show confirmation to save menu
+    goToConfirmMenu();
   } catch (err) {
     console.log(err);
   }
@@ -77,7 +89,7 @@ const controlSaveByWindow = async function () {
 const controlConfirmSave = async function () {
   try {
     // 1. Get the name of tab collection & pass it to model
-    const name = confirmSaveView.getSaveName();
+    const name = confirmSaveMenuView.getSaveName();
     if (!name) return alert('Please enter a name!');
 
     //TODO 1.1 check if collection name exists (otherwise it will override state)
@@ -86,12 +98,13 @@ const controlConfirmSave = async function () {
     const saved = await model.saveCollection(name);
     console.log(`saved name: ${saved}`);
 
-    // 3. hide confirmSaveView + render display saved tabset/collection
-    goToDisplayView();
+    // 3. update list collections view with new model.state.collectionNames
+    listCollectionView.render(model.state.collectionNames);
 
-    // 4. render success message in display menu
+    // 4. hide confirmSaveMenuView + render display saved tabset/collection
+    goToCollectionsMenu();
 
-    //   todo: pick a phrase tab-set or tab collection and stick with it
+    // 5. render success message in display menu
   } catch (err) {
     console.log(`💥👾💥 ${err.message}`);
   }
@@ -107,20 +120,46 @@ const controlOpenCollection = async function (name) {
   }
 };
 
+// Delete list items
+const controlDeleteTab = function (dataId) {
+  // Delete the tab from state using url as id
+  model.deleteTab(dataId);
+  // Re-render the listTabView
+  listTabView.render(model.state.selectedTabs.tabsArr);
+};
+
+const controlDeleteCollection = async function (dataId) {
+  try {
+    // Delete collection from state and storage using name as id
+    await model.deleteCollection(dataId);
+    // Re-render the listCollectionView
+    listCollectionView.render(model.state.collectionNames);
+  } catch (err) {
+    console.error(`💥 controlDeleteCollection:  ${err.message}`);
+  }
+};
+
+document
+  .querySelector('.manage__link')
+  .addEventListener('click', model.checkStorage());
+
 const init = function () {
   navigationView.handleClickDot(controlNav);
   navigationView.handleArrowKey(controlNav);
 
-  saverView.handleOpenPopup(controlOpenPopup);
-  saverView.handleSaveWindow(controlSaveByWindow);
-  //   saverView.handleSaveSelectTabs(handler);
-  //   saverView.handleSaveByUrl(controlSaveWindow);
+  saveActionMenuView.handleOpenPopup(controlOpenPopup);
+  saveActionMenuView.handleSaveWindow(controlSaveByWindow);
+  //   saveActionMenuView.handleSaveSelectTabs(handler);
+  //   saveActionMenuView.handleSaveByUrl(controlSaveWindow);
 
-  displayCollectionsView.handleOpen(controlOpenCollection);
+  collectionsMenuView.handleOpen(controlOpenCollection);
 
   // register save button
   // using event delegation -- button doesnt exist at initialization
-  confirmSaveView.handleConfirmSave(controlConfirmSave);
+  confirmSaveMenuView.handleConfirmSave(controlConfirmSave);
+
+  listTabView.handleDeleteTab(controlDeleteTab);
+  listCollectionView.handleDeleteTab(controlDeleteCollection);
 };
 
 init();

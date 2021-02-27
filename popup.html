@@ -38,11 +38,14 @@
         </nav>
       </header>
 
-      <div class="title--container">
+      <!-- <div class="title--container">
         <h3 class="title">Save menu</h3>
-      </div>
+      </div> -->
 
       <div class="collections-save-menu">
+        <div class="title--container">
+          <h3 class="title">Save menu</h3>
+        </div>
         <div class="save-buttons">
           <div class="vert-element">
             <button class="btn--save btn--save-window">
@@ -56,6 +59,7 @@
             <button class="btn--save btn--save-url"><p>Save by URL</p></button>
           </div>
         </div>
+        <!-- TODO :: put the ul elements here -- outside of the js.  -->
         <!-- <ul class="tabs--confirm-save list--preview">
           <li class="tab--item list--preview-item">
             <p class="tab--url list--preview-item__text inline-element">test.url.com</p>
@@ -77,8 +81,32 @@
           </div>
         </form> -->
       </div>
-      <div class="collections-confirm-menu section--hidden"></div>
+
+      <div class="collections-confirm-menu section--hidden">
+        <div class="title--container">
+          <h3 class="title">Confirm Tabs for Save</h3>
+        </div>
+        <ul class="tabs--confirm-save list--preview"></ul>
+        <!-- <li></li> -->
+        <form class="form--confirm-save">
+          <input
+            type="text"
+            class="name--confirm-save"
+            name=""
+            id=""
+            placeholder="Name your tab collection"
+          />
+          <button class="btn--confirm-save">
+            <p class="">Save Collection</p>
+          </button>
+        </form>
+      </div>
+
       <div class="collections-display-menu section--hidden">
+        <div class="title--container">
+          <h3 class="title">My Collections</h3>
+        </div>
+        <ul class="collections--display list--preview"></ul>
         <!-- <ul class="collections--display list--preview">
           <li class="collection--item list--preview-item">
             <p class="collection--name list--preview-item__text inline-element">

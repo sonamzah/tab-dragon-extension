@@ -1,11 +1,11 @@
 // import "core-js/stable";
 // import {} from "fractional";
 
-import View from './View.js';
+import MenuView from './MenuView.js';
 
-class SaverView extends View {
-  // class SaverView {
-  _menuTitle = 'Save Menu';
+class SaveActionMenuView extends MenuView {
+  // class SaveActionMenuView {
+  // _menuTitle = 'Save Menu';
   _parentElement = document.querySelector('.collections-save-menu');
 
   handleOpenPopup(handler) {
@@ -41,4 +41,4 @@ class SaverView extends View {
   }
 }
 
-export default new SaverView();
+export default new SaveActionMenuView();

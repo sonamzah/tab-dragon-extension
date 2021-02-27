@@ -34,6 +34,17 @@ export const getStorage = async function (name) {
 };
 // const { data } = await getStorageData('data');
 
+// Remove item in storage using a single key (string) or array of keys (string[])
+export const removeStorage = async function (keys) {
+  return new Promise((resolve, reject) =>
+    chrome.storage.sync.remove(keys, () =>
+      chrome.runtime.lastError
+        ? reject(new Error(chrome.runtime.lastError.message))
+        : resolve(keys)
+    )
+  );
+};
+
 // Clear chrome.storage.sync
 export const clearSyncStorage = function () {
   chrome.storage.sync.clear(() =>

@@ -1,5 +1,10 @@
 // import { set } from 'core-js/fn/dict';
-import { setStorage, getStorage, clearSyncStorage } from './storage.js';
+import {
+  setStorage,
+  getStorage,
+  clearSyncStorage,
+  removeStorage,
+} from './storage.js';
 import { isEmpty } from './helpers.js';
 // import { stat } from 'fs/promises';
 
@@ -24,9 +29,9 @@ export const state = {
     },
   ],
   currentUI: {
-    saverView: true,
-    confirmSaveView: false,
-    displayCollectionsView: false,
+    saveActionMenu: true,
+    confirmMenu: false,
+    collectionsMenu: false,
   },
 };
 
@@ -34,9 +39,9 @@ export const state = {
 // for current UI passed in as a string argument
 export const updateCurrentUI = function (current) {
   const currentUI = {
-    saverView: false,
-    confirmSaveView: false,
-    displayCollectionsView: false,
+    saveActionMenu: false,
+    confirmMenu: false,
+    collectionsMenu: false,
   };
   if (!Object.keys(currentUI).includes(current))
     return console.error(
@@ -50,7 +55,7 @@ export const updateCurrentUI = function (current) {
 
 //*******RESET*STORAGE*******/
 //***************************/
-// clearSyncStorage();
+clearSyncStorage();
 //***************************/
 
 const changeTabUrl = function () {
@@ -112,12 +117,17 @@ const createCollectionDataObj = function (name, tags = []) {
 
 export const saveCollection = async function (name) {
   try {
+    //   test
+    console.log('Save Collection');
+    console.log('state.collectionNames');
+    console.log(state.collectionNames);
+
     // State.collection names should be updated from chrome.storage on load
     // so when saving in this function, the entire list of saved collection names is correctly updated
 
     //1. save the name of the collection saved for access to display on load browser action
     const collectionData = createCollectionDataObj(name);
-    state.collectionNames.push(collectionData);
+    state.collectionNames.push(collectionData); //TODO ---------IIIIIIII
     await setStorage({ collectionNames: state.collectionNames });
 
     const { tabsArr } = state.selectedTabs;
@@ -196,6 +206,63 @@ export const updateState = async function () {
   }
 };
 
+////////////////////////////////////////////////////////////////////////////////////
+export const deleteTab = function (delUrl) {
+  // state.selectedTabs.tabsArr for each tab => if (tab.url === dataId)
+  // 1. Get index of url to delete in the tabsArr
+  const delIndex = state.selectedTabs.tabsArr.findIndex(
+    tab => tab.url === delUrl
+  );
+  // 2. Use splice to delete the specified url (parameter: delUrl)
+  state.selectedTabs.tabsArr.splice(delIndex, 1);
+};
+
+// Todo:: deleteCollection(){}
+export const deleteCollection = async function (delName) {
+  try {
+    // 1. Delete collection from state.collectionNames
+    // 1.a Get index of url to delete in the tabsArr
+    const delIndex = state.collectionNames.findIndex(
+      collection => collection.name === delName
+    );
+    // 1.b Use splice to delete the specified collectionName (parameter: delName)
+    state.collectionNames.splice(delIndex, 1);
+    // testing
+    console.log('State.collectionNames');
+    console.log(state.collectionNames);
+
+    // 2. Set storage.collectionNames = state.collectionNames (which just had collection delName deleted)
+    await setStorage({ collectionNames: state.collectionNames });
+    //testing
+    console.log('storage.collectionNames');
+    const collNames = await getCollectionNames();
+    console.log(collNames);
+
+    // 3. Delete collection in question from storage.sync
+    const check = await removeStorage(delName);
+    //test
+    console.log('Deleted collection Name');
+    console.log(check);
+
+    //test
+    console.log('all contents in Storage');
+    const storageCheck = await getCollection(null);
+    console.log(storageCheck);
+
+    ///////////////////////////////////
+    //   Remove delName from storage
+  } catch (err) {
+    console.error(`💥 Open Collection:  ${err.message}`);
+    throw err;
+  }
+};
+
+//test function -- used in evnt listener in popup
+export const checkStorage = async function () {
+  console.log('Check storage: all contents in Storage');
+  const storageCheck = await getCollection(null);
+  console.log(storageCheck);
+};
 ///////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////

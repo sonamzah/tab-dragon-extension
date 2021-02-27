@@ -1,11 +1,11 @@
 //**************************** */
 //**************************** */
-saverView.render({});
-model.updateCurrentUI('saverView'); //update state
+saveActionMenuView.render({});
+model.updateCurrentUI('saveActionMenuView'); //update state
 
-displayCollectionsView.hide();
-saverView.render({}).show();
-model.updateCurrentUI('saverView'); //update state
+collectionsMenuView.hide();
+saveActionMenuView.render({}).show();
+model.updateCurrentUI('saveActionMenuView'); //update state
 //**************************** */
 //**************************** */
 
@@ -13,27 +13,27 @@ model.updateCurrentUI('saverView'); //update state
 //**************************** */
 
 //✅✅✅✅✅✅✅✅✅✅✅
-saverView.hide();
-displayCollectionsView.render(model.state.collectionNames).show();
-model.updateCurrentUI('displayCollectionsView'); //update state
+saveActionMenuView.hide();
+collectionsMenuView.render(model.state.collectionNames).show();
+model.updateCurrentUI('collectionsMenu'); //update state
 ////////////////////////////////
 //✅✅✅✅✅✅✅✅✅✅✅
-confirmSaveView.hide();
-displayCollectionsView.render(model.state.collectionNames).show();
-model.updateCurrentUI('displayCollectionsView'); //update state
+confirmSaveMenuView.hide();
+collectionsMenuView.render(model.state.collectionNames).show();
+model.updateCurrentUI('collectionsMenu'); //update state
 ////////////////////////////////
 //✅✅✅✅✅✅✅✅✅✅✅
-confirmSaveView.hide();
-displayCollectionsView.render(model.state.collectionNames).show();
-model.updateCurrentUI('displayCollectionsView');
+confirmSaveMenuView.hide();
+collectionsMenuView.render(model.state.collectionNames).show();
+model.updateCurrentUI('collectionsMenu');
 //**************************** */
 //**************************** */
 
 //**************************** */
 //**************************** */
-confirmSaveView.render(model.state.selectedTabs.tabsArr);
+confirmSaveMenuView.render(model.state.selectedTabs.tabsArr);
 // 3. Update state.currentUI
-model.updateCurrentUI('confirmSaveView');
+model.updateCurrentUI('confirmMenu');
 //**************************** */
 //**************************** */
 
@@ -43,74 +43,115 @@ model.updateCurrentUI('confirmSaveView');
 ///////////////////////////////////////////////////////////////////
 
 //cases
-// 1. on saverView
-// 2. on confirmSaveView
-// 3. on displayCollectionsView
+// 1. on saveActionMenuView
+// 2. on confirmSaveMenuView
+// 3. on collectionsMenuView
 
-const goToSaverView = function () {
-  displayCollectionsView.hide(); //Doesnt change if already hidden
-  saverView.render({}).show();
-  model.updateCurrentUI('saverView'); //update state
+const goToSaveActionMenu = function () {
+  collectionsMenuView.hide(); //Doesnt change if already hidden
+  saveActionMenuView.render({}).show();
+  model.updateCurrentUI('saveActionMenuView'); //update state
 };
 
 //cases
-// 1. on saverView
-// 2. on confirmSaveView
-// 3. on displayCollectionsView
+// 1. on saveActionMenuView
+// 2. on confirmSaveMenuView
+// 3. on collectionsMenuView
 
-//Handles saverView.hide() and confirmSaveView.hide()
-const goToDisplayView = function () {
-  saverView.hide();
-  displayCollectionsView.render(model.state.collectionNames).show();
-  model.updateCurrentUI('displayCollectionsView'); //update state
+//Handles saveActionMenuView.hide() and confirmSaveMenuView.hide()
+const goToCollectionsMenu = function () {
+  saveActionMenuView.hide();
+  collectionsMenuView.render(model.state.collectionNames).show();
+  model.updateCurrentUI('collectionsMenu'); //update state
 };
 
 const controlNav = function (direction) {
   //   if (!isString(direction)) return;
   console.log(direction);
-  if (model.state.currentUI.confirmSaveView) alert('cancel save?');
+  if (model.state.currentUI.confirmMenu) alert('cancel save?');
 
-  if (direction === 'left') goToSaverView();
-  if (direction === 'right') goToDisplayView();
+  if (direction === 'left') goToSaveActionMenu();
+  if (direction === 'right') goToCollectionsMenu();
 };
 
 // const controlNav = function (direction) {
 //   //   if (!isString(direction)) return;
 //   console.log(direction);
 //   if (direction === 'left') {
-//     // current UI === saverView
-//     if (model.state.currentUI.saverView) return;
-//     // current UI === confirmSaveView
-//     if (model.state.currentUI.confirmSaveView) {
+//     // current UI === saveActionMenuView
+//     if (model.state.currentUI.saveActionMenuView) return;
+//     // current UI === confirmMenu
+//     if (model.state.currentUI.confirmMenu) {
 //       alert('cancel save?');
-//       goToSaverView();
+//       goToSaveActionMenu();
 //     }
-//     // current UI === displayCollectionsView
-//     if (model.state.currentUI.displayCollectionsView) {
-//       goToSaverView();
+//     // current UI === collectionsMenu
+//     if (model.state.currentUI.collectionsMenu) {
+//       goToSaveActionMenu();
 //     }
 //   }
 //   if (direction === 'right') {
-//     // current UI === saverView
-//     if (model.state.currentUI.saverView) {
-//       goToDisplayView();
+//     // current UI === saveActionMenuView
+//     if (model.state.currentUI.saveActionMenuView) {
+//       goToCollectionsMenu();
 //     }
-//     // current UI === confirmSaveView
-//     if (model.state.currentUI.confirmSaveView) {
+//     // current UI === confirmMenu
+//     if (model.state.currentUI.confirmMenu) {
 //       alert('cancel save?');
-//       goToDisplayView();
+//       goToCollectionsMenu();
 //     }
-//     // current UI === displayCollectionsView
-//     if (model.state.currentUI.displayCollectionsView) return;
+//     // current UI === collectionsMenu
+//     if (model.state.currentUI.collectionsMenu) return;
 //   }
 
-//   // current UI === saverView
+//   // current UI === saveActionMenuView
 //   //    direction === 'left'
 //   //    direction === 'right'
 //   // current UI === cinfirmSaveView
 //   //    direction === 'left'
 //   //    direction === 'right'
-//   // current UI === displayCollectionsView
+//   // current UI === collectionsMenu
 //   //    direction === 'left'
 //   //    direction === 'right'
 // };
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+
+//Note -- display collections
+const markup = `
+        <li class="${
+          options ? 'tab--item' : 'collection--item'
+        }  list--preview-item" data-id="${options ? url : name}">
+
+          <span title="${options ? url : ''}"><p class="${
+  options ? 'tab--url' : 'collection-name'
+} list--preview-item__text inline-element">${
+  options ? getDomain(url) : name
+}</p><span class="collection-size" title=""> 
+          ${collection?.size}</span></span>
+          
+          <button class="btn--delete btn--delete-${
+            options ? 'tab' : 'collection'
+          }  inline-element">&times;</button>
+        </li>
+        `;
+
+//Note -- confirm save
+const markup = `
+        <li class="tab--item list--preview-item" data-id="${name}">
+          <span title="${url}"><a class="tab--url list--preview-item__text inline-element" href="${url}">${getDomain(
+  url
+)}</a></span>
+          <button class="btn--delete btn--delete-tab inline-element">&times;</button>
+        </li>
+        `;
+
+//collection
+`<p class="collection-name list--preview-item__text inline-element">${name}</p> <span class="collection-size" title=""> ${collection?.size}</span>`;
+
+//tab
+`<span title="${url}"><a class="tab--url list--preview-item__text inline-element" href="${url}">${getDomain(
+  url
+)}</a></span>`;

@@ -2,7 +2,7 @@ import View from './View.js';
 
 class NavigationView extends View {
   _parentElement = document.querySelector('.nav');
-  _menuTitle = '';
+  // _menuTitle = '';
   _dotLeft = document.querySelector('.dot__left');
   _dotRight = document.querySelector('.dot__right');
 
