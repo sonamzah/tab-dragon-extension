@@ -24,3 +24,16 @@ export const isString = function (val) {
   if (typeof val === 'string' || val instanceof String) return true;
   else return false;
 };
+
+// Pass in an object literal or variable storing object literal
+// Returns bytes of JSON stringified obj
+export const calcBytes = function (obj) {
+  try {
+    //credit to solution: https://stackoverflow.com/questions/23318037/size-of-json-object-in-kbs-mbs#:~:text=from(JSON.,you%20the%20number%20of%20bytes.
+    // const size = encodeURI(JSON.stringify(obj)).split(/%..|./).length - 1; // A flexible solution -- see last solution of first answer @ credit link
+    return new TextEncoder().encode(JSON.stringify(obj)).length; // works on browsers and Node
+  } catch (err) {
+    console.log(`🍎 Calc Bytes: ${err.message}`);
+    throw err;
+  }
+};

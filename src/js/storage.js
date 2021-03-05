@@ -8,13 +8,10 @@ export const setStorage = async function (data) {
   const name = Object.keys(data)[0];
 
   return new Promise((resolve, reject) => {
-    chrome.storage.sync.set(
-      data,
-      () =>
-        chrome.runtime.lastError
-          ? reject(new Error(chrome.runtime.lastError.message))
-          : resolve(name)
-      // console.log(`${data} is set to ` + data.)
+    chrome.storage.sync.set(data, () =>
+      chrome.runtime.lastError
+        ? reject(new Error(chrome.runtime.lastError.message))
+        : resolve(name)
     );
   });
 };

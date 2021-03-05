@@ -63,7 +63,7 @@ const controlNav = function (direction) {
 
 const controlOpenPopup = async function () {
   try {
-    await model.updateState();
+    await model.initializeState();
     listCollectionView.render(model.state.collectionNames); // Render collection list in collection menu
   } catch (err) {
     console.log(`💥👾💥 Control Open Popup: ${err.message}`);
@@ -92,11 +92,27 @@ const controlConfirmSave = async function () {
     const name = confirmSaveMenuView.getSaveName();
     if (!name) return alert('Please enter a name!');
 
-    //TODO 1.1 check if collection name exists (otherwise it will override state)
+    // 1.1 check if collection name exists (otherwise it will override state)
+    if (model.collectionExists(name))
+      return alert(
+        'There is already a collection with this name. Please choose a new name. (collection name overwrite feature will be added later!)'
+      );
+
+    // 1.2 Check size in bytes of collection to save (including the name as key -- {name: [tabDat1,...tabDatN]}
+    if (model.checkBytesPerItem(name))
+      return alert('This collection is too damn big. delete some tabs!');
+
+    // 1.3 Check if storage is already full or too full to add collection
+    const checkStorageSpace = await model.checkStorageSpace(name);
+    if (checkStorageSpace)
+      return alert(`Storage is at its mad max. Delete some collections bro.`);
 
     // 2. Save the current set of tabs to chrome.storage.sync
     const saved = await model.saveCollection(name);
     console.log(`saved name: ${saved}`);
+
+    // 2.2 Clear name input form field
+    confirmSaveMenuView.clearInput();
 
     // 3. update list collections view with new model.state.collectionNames
     listCollectionView.render(model.state.collectionNames);
@@ -141,7 +157,7 @@ const controlDeleteCollection = async function (dataId) {
 
 document
   .querySelector('.manage__link')
-  .addEventListener('click', model.checkStorage());
+  .addEventListener('click', model.checkStorage);
 
 const init = function () {
   navigationView.handleClickDot(controlNav);

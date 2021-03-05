@@ -13,7 +13,7 @@ class NavigationView extends View {
       : dotElem.classList.remove('dark-dot');
   }
   toggleDarkenDot() {
-    console.log('I was ran');
+    // console.log('I was ran');
     this._dotLeft.classList.toggle('dark-dot');
     this._dotRight.classList.toggle('dark-dot');
   }
@@ -28,7 +28,7 @@ class NavigationView extends View {
   }
   handleArrowKey(handler) {
     window.addEventListener('keydown', function (e) {
-      console.log(e);
+      // console.log(e);
       const key = e.key;
       if (key === 'ArrowLeft') handler('left');
       if (key === 'ArrowRight') handler('right');
