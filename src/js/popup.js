@@ -92,27 +92,49 @@ const controlConfirmSave = async function () {
     const name = confirmSaveMenuView.getSaveName();
     if (!name) return alert('Please enter a name!');
 
+    //Note :: may want to refactor -- move gaurd clause checks into model.saveCollection(?)
+    /**
+    the reason for not is so that you can render appropriate messages from controller (popup.js) 
+    alternative option is to make these calls in model.saveCollection() but then make these checks throw an error with the specified 
+    failure message to render... then check the return val of model.saveCollection() here and if success -> continue... 
+    if it fails -> pull the message and render it to screen!
+    */
+
+    //----------GAURD CLAUSES--------------
     // 1.1 check if collection name exists (otherwise it will override state)
     if (model.collectionExists(name))
       return alert(
         'There is already a collection with this name. Please choose a new name. (collection name overwrite feature will be added later!)'
       );
 
+    //Note :: may want to refactor -- move this check into model.saveCollection(?)
     // 1.2 Check size in bytes of collection to save (including the name as key -- {name: [tabDat1,...tabDatN]}
     if (model.checkBytesPerItem(name))
       return alert('This collection is too damn big. delete some tabs!');
 
-    // 1.3 Check if storage is already full or too full to add collection
-    const checkStorageSpace = await model.checkStorageSpace(name);
-    if (checkStorageSpace)
-      return alert(`Storage is at its mad max. Delete some collections bro.`);
+    // 1.3 Check if storage is too full to add collection
+    if (await model.checkStorageSpace(name))
+      // NOTE :: it would be cool if you could say how many... though you dont know how big data will be --- (pad it?)
+      return alert(
+        `Storage is at its mad max. Try deleting some tabs from this collection...You may need to delete some previously saved collections.`
+      );
+    //----------GAURD CLAUSES END--------------
 
     // 2. Save the current set of tabs to chrome.storage.sync
-    const saved = await model.saveCollection(name);
-    console.log(`saved name: ${saved}`);
+    await model.saveCollection(name); // pushes to model.state.collectionNames
 
-    // 2.2 Clear name input form field
+    //TODO :: *BUG* if you dont move gaurd clauses into model.saveCollection - you need to add clear input after 1.3 gaurd check
+    // 2.1 Clear name input form field
     confirmSaveMenuView.clearInput();
+
+    // todo +++ THIS doesnt register because function returns early @ 1.3 when storage is maxed... so need to handle it differently
+    // todo --- shouldnt it get activated at the end of a save if its within the MAX range? YES -- but the (common) edge case that the
+    // todo ---- collection you are trying to add is what is maxing out storage...
+    // TODO ____ SOLUTION: either 1. add the diable @ 1.3 if-block ... or 2. use state.Max storage or... 3.
+    // 2.2 if there is NO storage space, disable buttons
+    if (await model.checkStorageSpace()) {
+      saveActionMenuView.disableSaveButtons();
+    }
 
     // 3. update list collections view with new model.state.collectionNames
     listCollectionView.render(model.state.collectionNames);
@@ -150,6 +172,10 @@ const controlDeleteCollection = async function (dataId) {
     await model.deleteCollection(dataId);
     // Re-render the listCollectionView
     listCollectionView.render(model.state.collectionNames);
+
+    // If there IS storage space, enable buttons
+    if (!(await model.checkStorageSpace()))
+      saveActionMenuView.enableSaveButtons(); // effectively does nothing if they are already enabled.
   } catch (err) {
     console.error(`💥 controlDeleteCollection:  ${err.message}`);
   }

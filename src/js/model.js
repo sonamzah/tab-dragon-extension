@@ -6,6 +6,7 @@ import {
   removeStorage,
 } from './storage.js';
 import { isEmpty, calcBytes } from './helpers.js';
+import { STORAGE_PADDING_BYTES } from './config.js';
 // import { stat } from 'fs/promises';
 
 export const state = {
@@ -70,13 +71,31 @@ export const initializeState = async function () {
   try {
     console.log('im loading!');
     const { collectionNames } = await getCollectionNames();
+
     //TODO :: remove console.logs
+    // TODO :: TEST TEST TEST THIS
+    // TEST this by deleting everything then checking console
     if (!collectionNames || isEmpty(collectionNames))
       return console.log('nothing in storage');
 
     state.collectionNames = collectionNames;
     console.log(state.collectionNames);
 
+    await updateStateStorageData();
+    //this will be abstracted, see below
+    // state.storageSpace.bytesUsed = await storageBytes();
+    // state.storageSpace.numItems = await storageNumItems();
+    // console.log('storageSpace.bytesUsed', state.storageSpace.bytesUsed);
+    // console.log('storageSpace.numItems', state.storageSpace.numItems);
+  } catch (err) {
+    console.error(`💥 initialize state:  ${err.message}`);
+    throw err;
+  }
+};
+
+//change to update state storage or something
+export const updateStateStorageData = async function () {
+  try {
     state.storageSpace.bytesUsed = await storageBytes();
     state.storageSpace.numItems = await storageNumItems();
     console.log('storageSpace.bytesUsed', state.storageSpace.bytesUsed);
@@ -133,6 +152,7 @@ const createTabDataObj = function (tabData) {
 const createCollectionDataObj = function (name, tags = []) {
   if (!name)
     return console.log('CreateCollectionDAtaObj -- Collection has no name wtf');
+  //Will have to add some transfer limit checks for this too once tags are implemented (checkBytesPerItem())
   return {
     name,
     tags,
@@ -142,24 +162,28 @@ const createCollectionDataObj = function (name, tags = []) {
 
 export const saveCollection = async function (name) {
   try {
-    //   test
-    console.log('--Save Collection()--');
-    console.log('state.collectionNames');
-    console.log(state.collectionNames);
-
     // State.collection names should be updated from chrome.storage on load
     // so when saving in this function, the entire list of saved collection names is correctly updated
 
     //1. save the name of the collection saved for access to display on load browser action
     const collectionData = createCollectionDataObj(name);
     state.collectionNames.push(collectionData); //TODO ---------IIIIIIII
+
+    //NOTE: could do --
+    // const collectionNames = await getCollectionNames().push(collectionData);
+    // await setStorage({ collectionNames: collectionNames });
+
     await setStorage({ collectionNames: state.collectionNames });
 
     const { tabsArr } = state.selectedTabs;
     const value = tabsArr.map(tab => createTabDataObj(tab));
 
     // setStorage returns the name of the saved tabset/collection
-    return await setStorage({ [name]: value }); // use computed property name [name]}
+    await setStorage({ [name]: value }); // use computed property name [name]}
+
+    //NOTE: could do --
+    // updateState(); // -- but update includes setting state.collectionNames from storage
+    await updateStateStorageData();
   } catch (err) {
     console.error(`💥 save collection: ${err.message}`);
     throw err;
@@ -249,6 +273,8 @@ export const deleteCollection = async function (delName) {
 
     // 3. Delete collection in question from storage.sync
     const check = await removeStorage(delName);
+
+    await updateStateStorageData();
     //test
     console.log('Deleted collection Name');
     console.log(check);
@@ -303,10 +329,10 @@ const storageBytes = async function () {
 };
 
 // Returns true if bytes in storage (+ bytes of collection to be saved) is at maximum capacity
-const checkStorageMaxBytes = async function (collectionSize = 0) {
+const checkStorageMaxBytes = async function (collectionSize = null) {
   try {
     const storageSize = await storageBytes();
-    // const storageSize = await storageBytes();
+
     console.log(
       'chrome.storage.sync.QUOTA_BYTES: ',
       chrome.storage.sync.QUOTA_BYTES
@@ -318,10 +344,20 @@ const checkStorageMaxBytes = async function (collectionSize = 0) {
         storageSize + collectionSize
       }`
     );
-
+    // For storage check SANS collection-to-save --
+    // Checking if storage is at its max limit QUOTA_BYTES (step 2.2 in popup.controlConfirmSave())
     if (
-      storageSize === chrome.storage.sync.QUOTA_BYTES ||
-      storageSize + collectionSize > chrome.storage.sync.QUOTA_BYTES
+      !collectionSize &&
+      storageSize > chrome.storage.sync.QUOTA_BYTES - STORAGE_PADDING_BYTES
+    )
+      return true;
+
+    // For save --
+    // Checking if collection-to-be-saved can fit into storage without reaching storage limit QUOTA_BYTES
+    if (
+      //   storageSize === chrome.storage.sync.QUOTA_BYTES ||
+      storageSize + collectionSize >=
+      chrome.storage.sync.QUOTA_BYTES
     )
       return true;
 
@@ -362,7 +398,8 @@ const checkStorageMaxItems = async function () {
 };
 
 //TODO :: DONT FORGET TO ADD the state -- storage bytes and update it when add/remove
-export const checkStorageSpace = async function (key) {
+//TODO! change name to storageIsMaxed()
+export const checkStorageSpace = async function (key = '') {
   try {
     const collectionSize = collectionBytes(key);
     console.log(
@@ -370,7 +407,11 @@ export const checkStorageSpace = async function (key) {
       collectionSize
     );
     const storageItemsCheck = await checkStorageMaxItems();
-    const storageBytesCheck = await checkStorageMaxBytes(collectionSize);
+    // If YES key, check if collection-to-save will fit into storage -- pass in collectionSize
+    // If NO key only check if current storage bytes are maxed (QUOTA_BYTES)
+    const storageBytesCheck = key
+      ? await checkStorageMaxBytes(collectionSize)
+      : await checkStorageMaxBytes();
 
     console.log(storageBytesCheck, storageItemsCheck);
 

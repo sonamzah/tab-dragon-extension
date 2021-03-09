@@ -6,7 +6,40 @@ import MenuView from './MenuView.js';
 class SaveActionMenuView extends MenuView {
   // class SaveActionMenuView {
   // _menuTitle = 'Save Menu';
+  buttons = Array.from(document.querySelectorAll('.btn--save'));
   _parentElement = document.querySelector('.collections-save-menu');
+
+  // toggleTitle() {
+  //   this._parentElement
+  //     .querySelector('.primary-title')
+  //     .classList.toggle('section--hidden');
+  //   this._parentElement
+  //     .querySelector('.secondary-title')
+  //     .classList.toggle('section--hidden');
+  // }
+
+  enableSaveButtons() {
+    //todo:: comment out all the state-storage bs you did earlier!
+    this._parentElement
+      .querySelector('.primary-title')
+      .classList.remove('section--hidden');
+    this._parentElement
+      .querySelector('.secondary-title')
+      .classList.add('section--hidden');
+
+    this.buttons.forEach(btn => btn.classList.remove('btn--disabled'));
+  }
+
+  disableSaveButtons() {
+    this._parentElement
+      .querySelector('.primary-title')
+      .classList.add('section--hidden');
+    this._parentElement
+      .querySelector('.secondary-title')
+      .classList.remove('section--hidden');
+
+    this.buttons.forEach(btn => btn.classList.add('btn--disabled'));
+  }
 
   handleOpenPopup(handler) {
     window.addEventListener('load', handler);
