@@ -21,30 +21,34 @@ const goToSaveActionMenu = function () {
     collectionsMenuView.hide();
   }
   // No toggle darken needed if currentUI === confirm view
-  confirmSaveMenuView.hide();
+  if (model.state.currentUI.confirmMenu) {
+    confirmSaveMenuView.clearInput();
+    confirmSaveMenuView.hide();
+  }
 
   saveActionMenuView.show();
   model.updateCurrentUI('saveActionMenu'); // Update state.currentUI
 };
 const goToConfirmMenu = function () {
   if (model.state.currentUI.confirmMenu) return;
-  // 1. Hide save action menu
+
   saveActionMenuView.hide(); //confirm view only accessable from saveView
 
-  // 2. Show the confirm save menu
   confirmSaveMenuView.show();
   model.updateCurrentUI('confirmMenu'); // Update state.currentUI
 };
 //Handles saveActionMenuView.hide() and confirmSaveMenuView.hide()
 const goToCollectionsMenu = function () {
   if (model.state.currentUI.collectionsMenu) return;
+  if (model.state.currentUI.confirmMenu) {
+    confirmSaveMenuView.clearInput();
+    confirmSaveMenuView.hide();
+  }
 
-  //   console.dir(collectionsMenuView);
   navigationView.toggleDarkenDot(); // Change dark nav dot
-  saveActionMenuView.hide();
-  confirmSaveMenuView.hide();
-  //todo:: add update method
-  //   collectionsMenuView.render(model.state.collectionNames).show();
+
+  saveActionMenuView.hide(); // Doesnt affect if its already hidden, no if-check needed
+
   collectionsMenuView.show();
   model.updateCurrentUI('collectionsMenu'); // Update state.currentUI
 };
@@ -55,7 +59,10 @@ const goToCollectionsMenu = function () {
 const controlNav = function (direction) {
   //   if (!isString(direction)) return;
   console.log(direction);
-  if (model.state.currentUI.confirmMenu) alert('cancel save?');
+  if (model.state.currentUI.confirmMenu) {
+    const userRes = confirm('Cancel saving this collection?');
+    if (!userRes) return;
+  }
 
   if (direction === 'left') goToSaveActionMenu();
   if (direction === 'right') goToCollectionsMenu();
@@ -63,8 +70,15 @@ const controlNav = function (direction) {
 
 const controlOpenPopup = async function () {
   try {
+    // 1. Initialize state - set model.state.collectionNames FROM storage.sync
     await model.initializeState();
+    // 1.1 render those initialized names
     listCollectionView.render(model.state.collectionNames); // Render collection list in collection menu
+
+    // 2 if there is NO storage space, disable buttons
+    if (await model.checkStorageSpace()) {
+      saveActionMenuView.disableSaveButtons();
+    }
   } catch (err) {
     console.log(`💥👾💥 Control Open Popup: ${err.message}`);
   }
@@ -86,52 +100,22 @@ const controlSaveByWindow = async function () {
   }
 };
 
-const controlConfirmSave = async function () {
+const controlConfirmSave = async function (confirmed = false) {
   try {
     // 1. Get the name of tab collection & pass it to model
     const name = confirmSaveMenuView.getSaveName();
     if (!name) return alert('Please enter a name!');
 
-    //Note :: may want to refactor -- move gaurd clause checks into model.saveCollection(?)
-    /**
-    the reason for not is so that you can render appropriate messages from controller (popup.js) 
-    alternative option is to make these calls in model.saveCollection() but then make these checks throw an error with the specified 
-    failure message to render... then check the return val of model.saveCollection() here and if success -> continue... 
-    if it fails -> pull the message and render it to screen!
-    */
-
-    //----------GAURD CLAUSES--------------
-    // 1.1 check if collection name exists (otherwise it will override state)
-    if (model.collectionExists(name))
-      return alert(
-        'There is already a collection with this name. Please choose a new name. (collection name overwrite feature will be added later!)'
-      );
-
-    //Note :: may want to refactor -- move this check into model.saveCollection(?)
-    // 1.2 Check size in bytes of collection to save (including the name as key -- {name: [tabDat1,...tabDatN]}
-    if (model.checkBytesPerItem(name))
-      return alert('This collection is too damn big. delete some tabs!');
-
-    // 1.3 Check if storage is too full to add collection
-    if (await model.checkStorageSpace(name))
-      // NOTE :: it would be cool if you could say how many... though you dont know how big data will be --- (pad it?)
-      return alert(
-        `Storage is at its mad max. Try deleting some tabs from this collection...You may need to delete some previously saved collections.`
-      );
-    //----------GAURD CLAUSES END--------------
-
+    //NOTE ::  store and check resolved val of this call -- move on or render message??
     // 2. Save the current set of tabs to chrome.storage.sync
-    await model.saveCollection(name); // pushes to model.state.collectionNames
+    await model.saveCollection(name, confirmed); // pushes to model.state.collectionNames
 
-    //TODO :: *BUG* if you dont move gaurd clauses into model.saveCollection - you need to add clear input after 1.3 gaurd check
     // 2.1 Clear name input form field
     confirmSaveMenuView.clearInput();
 
-    // todo +++ THIS doesnt register because function returns early @ 1.3 when storage is maxed... so need to handle it differently
-    // todo --- shouldnt it get activated at the end of a save if its within the MAX range? YES -- but the (common) edge case that the
-    // todo ---- collection you are trying to add is what is maxing out storage...
-    // TODO ____ SOLUTION: either 1. add the diable @ 1.3 if-block ... or 2. use state.Max storage or... 3.
     // 2.2 if there is NO storage space, disable buttons
+    // (Alternative to this function check, One could use the storageSpace object
+    // in model.state and write an explicit check this might be more clear to read and understand)
     if (await model.checkStorageSpace()) {
       saveActionMenuView.disableSaveButtons();
     }
@@ -139,12 +123,23 @@ const controlConfirmSave = async function () {
     // 3. update list collections view with new model.state.collectionNames
     listCollectionView.render(model.state.collectionNames);
 
-    // 4. hide confirmSaveMenuView + render display saved tabset/collection
+    // 4. hide confirmSaveMenuView + display saved tabset/collection
     goToCollectionsMenu();
 
     // 5. render success message in display menu
+    // if(confirmed) alertmessage.render('*name* was overwritten')
   } catch (err) {
-    console.log(`💥👾💥 ${err.message}`);
+    // TODO :: add a render message method to view! -- modal with message.
+    if (err.name === 'NameExists') {
+      //   const userRes = confirmMessage.render(err.message);
+      const userRes = confirm(err.message);
+      if (!userRes) return;
+      controlConfirmSave(true);
+
+      return;
+    } // else
+    // alertMessage.render(err.message);
+    alert(`💥👾💥 ${err.message}`);
   }
 };
 

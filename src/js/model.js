@@ -72,21 +72,19 @@ export const initializeState = async function () {
     console.log('im loading!');
     const { collectionNames } = await getCollectionNames();
 
+    // await populateCollectionNames(); // Use this to reset collectionNames if accidentally deleted (in development) and then comment out line 83
+
     //TODO :: remove console.logs
     // TODO :: TEST TEST TEST THIS
     // TEST this by deleting everything then checking console
     if (!collectionNames || isEmpty(collectionNames))
+      // return or throw err -> welcome message(?)
       return console.log('nothing in storage');
 
     state.collectionNames = collectionNames;
     console.log(state.collectionNames);
 
     await updateStateStorageData();
-    //this will be abstracted, see below
-    // state.storageSpace.bytesUsed = await storageBytes();
-    // state.storageSpace.numItems = await storageNumItems();
-    // console.log('storageSpace.bytesUsed', state.storageSpace.bytesUsed);
-    // console.log('storageSpace.numItems', state.storageSpace.numItems);
   } catch (err) {
     console.error(`💥 initialize state:  ${err.message}`);
     throw err;
@@ -147,8 +145,11 @@ const createTabDataObj = function (tabData) {
     title: tabData.title,
     url: tabData.url,
     windowId: tabData.windowId,
+    // ADD THIS TO createCollectionDataObj TOO???
+    byTabDragon: true,
   };
 };
+// TODO -- next round -- add more metadata to sort the collections by! then you can use populateCollectionNames below
 const createCollectionDataObj = function (name, tags = []) {
   if (!name)
     return console.log('CreateCollectionDAtaObj -- Collection has no name wtf');
@@ -160,25 +161,99 @@ const createCollectionDataObj = function (name, tags = []) {
   };
 };
 
-export const saveCollection = async function (name) {
+//TODO __ REMOVE THIS LATER (?)
+// needed this to get collectionNames back after accidentally deleting it... reason not use it is because
+// I dont want the order of data to be lost... if more meta-data is added later you can sort it always after populating
+const populateCollectionNames = async function () {
+  try {
+    console.log('inside populate');
+    const collections = await getCollection(null);
+    console.log(collections);
+    // .entries creates an array of key-val pairs: [ [key0,val0], [key1,val1],... ] note -- could use descrtucturing for more legibilty
+    const collectionNames = Object.entries(collections)
+      .filter(coll => {
+        const [key] = coll;
+        return key !== 'collectionNames';
+      })
+      .map(coll => {
+        const [key, val] = coll;
+        return { name: key, tags: [], size: val.length };
+        // coll[0];
+      });
+    // TODO connect this part when you reset storage -- want to be able to check if storage data is by tabdragon
+    //   .filter(
+    //     coll => coll[1].byTabDragon
+    //   )
+    //   .map(coll => {
+    //     const [key, val] = coll;
+    //     console.log(key);
+    //     return key;
+    //     // coll[0];
+    //   });
+    state.collectionNames = collectionNames;
+    // console.log(state.collectionNames);
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const saveCollection = async function (name, confirmed) {
   try {
     // State.collection names should be updated from chrome.storage on load
     // so when saving in this function, the entire list of saved collection names is correctly updated
 
+    //----------GAURD CLAUSES START--------------
+    // a. Check size in bytes of collection to save (including the name as key -- {name: [tabDat1,...tabDatN]}
+    if (checkBytesPerItem(name))
+      //'This collection is to big to be saved all at once. Please delete some tabs'
+      throw new Error('This collection is too damn big. delete some tabs!');
+
+    // b. Check if storage is too full to add collection
+    if (await checkStorageSpace(name))
+      // NOTE :: it would be cool if you could say how many... though you dont know how big data will be --- (pad it?)
+      // 'Erm, storage is too full to save this collection. Try saving a smaller collection (by deleting some tabs) or deleting some of your previously saved collections.'
+      throw new Error(
+        `Storage is at its mad max. Try deleting some tabs from this collection...You may need to delete some previously saved collections.`
+      );
+
+    // Note :: this one maybe keep back in controlConfirm save so you can render a 'override?' popup
+    // c. Check if collection name exists (otherwise it will override state)
+    if (!confirmed && collectionExists(name)) {
+      const err = new Error(
+        'You already have a collection with this name. Do you want to overwrite it?'
+      );
+      err.name = 'NameExists';
+      throw err;
+    }
+    //----------GAURD CLAUSES END--------------
+
     //1. save the name of the collection saved for access to display on load browser action
     const collectionData = createCollectionDataObj(name);
-    state.collectionNames.push(collectionData); //TODO ---------IIIIIIII
+    state.collectionNames.push(collectionData);
+
+    // 1.1 create a mask from collection names with which to delete duplicates
+    const arrayMask = state.collectionNames
+      .map(coll => coll.name)
+      .map((curName, index, self) =>
+        self.lastIndexOf(curName) === index ? curName : null
+      );
+    // 1.2 remove duplicates
+    state.collectionNames = state.collectionNames.filter(
+      (value, index) => value.name === arrayMask[index]
+    );
 
     //NOTE: could do --
     // const collectionNames = await getCollectionNames().push(collectionData);
     // await setStorage({ collectionNames: collectionNames });
 
+    // 2. put updated state.collectionNames in storage
     await setStorage({ collectionNames: state.collectionNames });
 
+    // 3. Configure tab data for collection-to-be-saved
     const { tabsArr } = state.selectedTabs;
     const value = tabsArr.map(tab => createTabDataObj(tab));
 
-    // setStorage returns the name of the saved tabset/collection
+    // 3.1 setStorage returns the name of the saved tabset/collection
     await setStorage({ [name]: value }); // use computed property name [name]}
 
     //NOTE: could do --
@@ -293,7 +368,7 @@ export const deleteCollection = async function (delName) {
 };
 
 //////////////////////////////////////////////////////////////////
-
+//TODO:: remove export?
 export const collectionExists = function (name) {
   return state.collectionNames.some(collection => collection.name === name);
 };
