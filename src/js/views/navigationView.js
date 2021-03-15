@@ -3,23 +3,22 @@ import View from './View.js';
 class NavigationView extends View {
   _parentElement = document.querySelector('.nav');
   // _menuTitle = '';
-  _dotLeft = document.querySelector('.dot__left');
-  _dotRight = document.querySelector('.dot__right');
+  _navLeft = document.querySelector('.nav__left');
+  _navRight = document.querySelector('.nav__right');
 
-  //add the dark-dot class to the element passed in (should be dots__dot) iff darken is true
-  darkenDot(dotElem, darken = true) {
-    darken
-      ? dotElem.classList.add('dark-dot')
-      : dotElem.classList.remove('dark-dot');
+  displayTitleSave() {
+    this._navLeft.textContent = 'Save';
   }
-  toggleDarkenDot() {
-    // console.log('I was ran');
-    this._dotLeft.classList.toggle('dark-dot');
-    this._dotRight.classList.toggle('dark-dot');
+  displayTitleCofirm() {
+    this._navLeft.textContent = 'Cancel';
+  }
+  toggleNavActive() {
+    this._navLeft.classList.toggle('nav-active');
+    this._navRight.classList.toggle('nav-active');
   }
   handleClickDot(handler) {
     this._parentElement.addEventListener('click', function (e) {
-      const btn = e.target.closest('.dots__dot');
+      const btn = e.target.closest('.nav__item');
       if (!btn) return;
       const { slide } = btn.dataset;
       //   toggle dot fill

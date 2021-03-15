@@ -17,12 +17,14 @@ const goToSaveActionMenu = function () {
   // TODO :: change all current UI names to menu
   if (model.state.currentUI.saveActionMenu) return;
   if (model.state.currentUI.collectionsMenu) {
-    navigationView.toggleDarkenDot();
+    navigationView.toggleNavActive();
     collectionsMenuView.hide();
   }
   // No toggle darken needed if currentUI === confirm view
   if (model.state.currentUI.confirmMenu) {
     confirmSaveMenuView.clearInput();
+    // Change left nav text content - 'Save'
+    navigationView.displayTitleSave();
     confirmSaveMenuView.hide();
   }
 
@@ -34,6 +36,9 @@ const goToConfirmMenu = function () {
 
   saveActionMenuView.hide(); //confirm view only accessable from saveView
 
+  // Change left nav text content - 'Confirm'
+  navigationView.displayTitleCofirm();
+
   confirmSaveMenuView.show();
   model.updateCurrentUI('confirmMenu'); // Update state.currentUI
 };
@@ -42,10 +47,12 @@ const goToCollectionsMenu = function () {
   if (model.state.currentUI.collectionsMenu) return;
   if (model.state.currentUI.confirmMenu) {
     confirmSaveMenuView.clearInput();
+    // Change left nav text content - 'Save'
+    navigationView.displayTitleSave();
     confirmSaveMenuView.hide();
   }
 
-  navigationView.toggleDarkenDot(); // Change dark nav dot
+  navigationView.toggleNavActive(); // Change dark nav dot
 
   saveActionMenuView.hide(); // Doesnt affect if its already hidden, no if-check needed
 
@@ -57,8 +64,6 @@ const goToCollectionsMenu = function () {
 //todo:: figure out how to style the animated slide in
 //**************************************** */
 const controlNav = function (direction) {
-  //   if (!isString(direction)) return;
-  console.log(direction);
   if (model.state.currentUI.confirmMenu) {
     const userRes = confirm('Cancel saving this collection?');
     if (!userRes) return;
@@ -93,7 +98,10 @@ const controlSaveByWindow = async function () {
     // 2. Render tab list -- posibly move this into the goToConfirm funct later when adding more saveBy features
     listTabView.render(model.state.selectedTabs.tabsArr);
 
-    // 3. Show confirmation to save menu
+    // 3.1 Change left nav text content - 'Confirm'
+    // navigationView.displayTitleCofirm();
+
+    // 3 Show confirmation to save menu
     goToConfirmMenu();
   } catch (err) {
     console.log(err);
@@ -139,7 +147,7 @@ const controlConfirmSave = async function (confirmed = false) {
       return;
     } // else
     // alertMessage.render(err.message);
-    alert(`💥👾💥 ${err.message}`);
+    alert(`🐲 ${err.message}`);
   }
 };
 
@@ -153,8 +161,20 @@ const controlOpenCollection = async function (name) {
   }
 };
 
+// Confirm deletion of item
+const confirmDelMessage = function (item) {
+  //Todo: change this to rendering custom confrim message
+  //const userRes =  confirmMessage.render(message)
+  return confirm(`Delete this ${item}?`);
+};
+
 // Delete list items
 const controlDeleteTab = function (dataId) {
+  // Render confirm-deletion-message -- exit deletion if canceled
+  //TODO -- instead of confirming -> make an undo button or a deletion history(?) -- store the deleted in an array until popup is closed then that dat will not persist!
+  //   const userRes = confirmDelMessage('tab');
+  //   if (!userRes) return;
+
   // Delete the tab from state using url as id
   model.deleteTab(dataId);
   // Re-render the listTabView
@@ -163,6 +183,9 @@ const controlDeleteTab = function (dataId) {
 
 const controlDeleteCollection = async function (dataId) {
   try {
+    // Render confirm-deletion-message -- exit deletion if canceled
+    const userRes = confirmDelMessage('collection');
+    if (!userRes) return;
     // Delete collection from state and storage using name as id
     await model.deleteCollection(dataId);
     // Re-render the listCollectionView

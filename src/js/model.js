@@ -1,4 +1,3 @@
-// import { set } from 'core-js/fn/dict';
 import {
   setStorage,
   getStorage,
@@ -38,6 +37,10 @@ export const state = {
     confirmMenu: false,
     collectionsMenu: false,
   },
+  deleted: {
+    tabs: {},
+    collections: {},
+  },
 };
 
 // Updates the currentUI state property, sets all to false except
@@ -62,10 +65,6 @@ export const updateCurrentUI = function (current) {
 //***************************/
 // clearSyncStorage();
 //***************************/
-
-// const changeTabUrl = function () {
-//   chrome.tabs.update({ url: 'https://mail.google.com/mail/u/0/?tab=rm' });
-// };
 
 export const initializeState = async function () {
   try {
@@ -150,12 +149,13 @@ const createTabDataObj = function (tabData) {
   };
 };
 // TODO -- next round -- add more metadata to sort the collections by! then you can use populateCollectionNames below
-const createCollectionDataObj = function (name, tags = []) {
+const createCollectionDataObj = function (name, faviconUrls = [], tags = []) {
   if (!name)
     return console.log('CreateCollectionDAtaObj -- Collection has no name wtf');
   //Will have to add some transfer limit checks for this too once tags are implemented (checkBytesPerItem())
   return {
     name,
+    faviconUrls,
     tags,
     size: state.selectedTabs.tabsArr.length,
   };
@@ -205,15 +205,16 @@ export const saveCollection = async function (name, confirmed) {
     //----------GAURD CLAUSES START--------------
     // a. Check size in bytes of collection to save (including the name as key -- {name: [tabDat1,...tabDatN]}
     if (checkBytesPerItem(name))
-      //'This collection is to big to be saved all at once. Please delete some tabs'
-      throw new Error('This collection is too damn big. delete some tabs!');
+      //''
+      throw new Error(
+        'This collection is to big to be saved all at once. Please delete some tabs!'
+      );
 
     // b. Check if storage is too full to add collection
     if (await checkStorageSpace(name))
       // NOTE :: it would be cool if you could say how many... though you dont know how big data will be --- (pad it?)
-      // 'Erm, storage is too full to save this collection. Try saving a smaller collection (by deleting some tabs) or deleting some of your previously saved collections.'
       throw new Error(
-        `Storage is at its mad max. Try deleting some tabs from this collection...You may need to delete some previously saved collections.`
+        `Erm, storage is too full to save this collection. Try saving a smaller collection (by deleting some tabs) or deleting some of your existing collections.`
       );
 
     // Note :: this one maybe keep back in controlConfirm save so you can render a 'override?' popup
@@ -226,8 +227,21 @@ export const saveCollection = async function (name, confirmed) {
       throw err;
     }
     //----------GAURD CLAUSES END--------------
+    //todo! 1. save and commit and push the UI changes
+    //todo! 4. delete collections see if it works correctly
+    //todo! 3. do this stuff
+    //TODO! MAKE ARRAY WITH FAVICONS URLS FROM STATE.SELECTEDTABS.TABSARRAY
+    //TODO:  PASS IT INTO createCollectionDataObj()
+    //todo! -- create a get/populate favicons from 1) tab 2) collection (first 3) -- both return array so that the generate markup can handle them the same
+    //todo! ^^ maybe not? as simple as getting favicons in state for both. creating an array of favicons with ternary? in listview.. then `${}` programatically creating img elements in markup? i think yes
+    const { tabsArr } = state.selectedTabs; // Tab data from current session
 
-    //1. save the name of the collection saved for access to display on load browser action
+    //todo: working on the below!
+    // 1nnerest. Create array of favicons to pass into createCollectionDataObj()
+    // const faviconsUrls = tabsArr.map(tab => tab.favIconUrl);
+    // console.log(faviconsUrls);
+
+    // 1. save the name of the collection saved for access to display on load browser action
     const collectionData = createCollectionDataObj(name);
     state.collectionNames.push(collectionData);
 
@@ -250,7 +264,6 @@ export const saveCollection = async function (name, confirmed) {
     await setStorage({ collectionNames: state.collectionNames });
 
     // 3. Configure tab data for collection-to-be-saved
-    const { tabsArr } = state.selectedTabs;
     const value = tabsArr.map(tab => createTabDataObj(tab));
 
     // 3.1 setStorage returns the name of the saved tabset/collection
@@ -268,7 +281,7 @@ export const saveCollection = async function (name, confirmed) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 // NOTE :: This only returns one collection (by name) at at time.
-// Returns object of array of (tab) objects { [ {}, {}, {}, ... ] }
+// Returns object of array of (tab) objects { name: [ {}, {}, {}, ... ] }
 export const getCollection = async function (name) {
   try {
     return getStorage(name);

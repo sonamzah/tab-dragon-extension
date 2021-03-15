@@ -5,7 +5,6 @@ import { PREV_TITLE_LEN } from '../config.js';
 
 //   child instances of this class will not ever render
 //   They are simply menus that will be shown or hidden (see show() and hide() methods in parent class View.js)
-
 export default class ListView extends View {
   handleDeleteTab(handler) {
     this._parentElement.addEventListener('click', function (e) {
@@ -21,16 +20,16 @@ export default class ListView extends View {
     });
   }
 
-  // ${truncToNumChars( getDomain(url), PREV_TITLE_LEN)
-
   // NOTE ::  when tab is true this method creates markup for a list of tab items
   // -- when false, for a list of collection items
   // supply a single arg of tabData (model.state.selectedTabs.tabsArr[i]) or collection data (model.state.collectionNames[i])
+  //   todo put make the arguments an options object?
   _generateMarkupList(itemData, tab = true) {
     const liClass = tab ? 'tab--item' : 'collection--item';
     const dataId = tab ? itemData.url : itemData.name;
     const spanTitle = tab ? itemData.url : '';
     const pClass = tab ? 'tab--url' : 'collection-name';
+    // ${truncToNumChars( getDomain(url), PREV_TITLE_LEN) -- truncate the names when your ready to render them
     const pText = tab ? getDomain(itemData.url) : itemData.name;
     const collectionSize = tab
       ? ''
@@ -39,26 +38,13 @@ export default class ListView extends View {
 
     const markup = `
         <li class="${liClass} list--preview-item" data-id="${dataId}">
-          <span title="${spanTitle}"><p class="${pClass} list--preview-item__text inline-element">${pText}</p>${collectionSize}</span>
-          <button class="btn--delete btn--delete-${btnClass} inline-element">&times;</button>
+          <span title="${spanTitle}">
+            <p class="${pClass} list--preview-item__text inline-element">${pText}</p>
+            <span class="collection-size">${collectionSize}</span>
+          </span>
+          <button class="btn--delete btn--delete-${btnClass}">&times;</button>
         </li>
         `;
     return markup;
-
-    // const markup = `
-    //     <li class="tab--item list--preview-item">
-    //       <span title="${url}"><a class="tab--url list--preview-item__text inline-element" href="${url}">${getDomain(
-    //   url
-    // )}</a></span>
-    //       <button class="btn--delete btn--delete-tab inline-element">&times;</button>
-    //     </li>
-    //     `;
-    // `<li class="list--preview-item">
-    //       <a class="list--preview-item__text inline-element" href="${url}" title="${url}">${getDomain(
-    //   url
-    // )}</a>
-    //       <button class="btn--confirm-delete inline-element">&times;</button>
-    //     </li>
-    //     `;
   }
 }

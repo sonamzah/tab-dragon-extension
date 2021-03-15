@@ -3,7 +3,6 @@
 // NOTE :: wrapping the variable name in [] evaluates it immediately
 // if not the API call will not evaluate it and assume
 // that the key is called 'name'
-
 export const setStorage = async function (data) {
   const name = Object.keys(data)[0];
 
@@ -17,8 +16,8 @@ export const setStorage = async function (data) {
 };
 // await setStorageData({ data: [someData] });
 
-// NOTE :: result is an object -- containing array -- of objects
-//      { [ tab_1, tab_2, tabData_3, ... ] }  -- { [ {}, {}, {}, ... ] }
+// NOTE :: result is an object -- with property name: containing array -- of objects
+//      { name : [ tab_1, tab_2, tabData_3, ... ] }  -- { name : [ {}, {}, {}, ... ] }
 //                -- where tabData-i is an object literal {}
 export const getStorage = async function (name) {
   return new Promise((resolve, reject) =>

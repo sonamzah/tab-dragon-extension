@@ -1,11 +1,6 @@
-// import "core-js/stable";
-// import {} from "fractional";
-
 import MenuView from './MenuView.js';
 
 class SaveActionMenuView extends MenuView {
-  // class SaveActionMenuView {
-  // _menuTitle = 'Save Menu';
   buttons = Array.from(document.querySelectorAll('.btn--save'));
   _parentElement = document.querySelector('.collections-save-menu');
 
@@ -19,24 +14,21 @@ class SaveActionMenuView extends MenuView {
   // }
 
   enableSaveButtons() {
-    //todo:: comment out all the state-storage bs you did earlier!
-    this._parentElement
-      .querySelector('.primary-title')
-      .classList.remove('section--hidden');
-    this._parentElement
-      .querySelector('.secondary-title')
-      .classList.add('section--hidden');
+    this._nav.classList.remove('nav-warning');
+
+    const title = this._parentElement.querySelector('.title--container');
+    title.classList.add('section--hidden');
+    title.classList.remove('title-container-warning');
 
     this.buttons.forEach(btn => btn.classList.remove('btn--disabled'));
   }
 
   disableSaveButtons() {
-    this._parentElement
-      .querySelector('.primary-title')
-      .classList.add('section--hidden');
-    this._parentElement
-      .querySelector('.secondary-title')
-      .classList.remove('section--hidden');
+    this._nav.classList.add('nav-warning');
+
+    const title = this._parentElement.querySelector('.title--container');
+    title.classList.add('title-container-warning');
+    title.classList.remove('section--hidden');
 
     this.buttons.forEach(btn => btn.classList.add('btn--disabled'));
   }
@@ -50,7 +42,6 @@ class SaveActionMenuView extends MenuView {
       const btn = e.target.closest('.btn--save-window');
       if (!btn) return;
       handler();
-      //   this._clear();
     });
   }
   //   handleSaveSelectTabs(handler) {}

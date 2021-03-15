@@ -12,8 +12,6 @@ class ConfirmSaveMenuView extends MenuView {
 
   getSaveName() {
     const name = this._parentElement.querySelector('.name--confirm-save').value;
-    // this._clearInput();
-
     return name;
   }
 

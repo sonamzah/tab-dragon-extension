@@ -3,6 +3,7 @@
 
 export default class View {
   //   _titleElement = document.querySelector('.title');
+  _nav = document.querySelector('.nav');
   _data;
 
   hide() {

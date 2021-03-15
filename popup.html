@@ -22,19 +22,23 @@
   <body>
     <div class="container">
       <header class="header">
-        <nav class="nav vertical-align">
-          <ul>
-            <li class="nav__item">
+        <div class="logo--wrap">
+          <div class="logo--img inline-element">
+            <img src="./src/img/dragon32x32.png" alt="" />
+          </div>
+          <div class="logo--title inline-element">Tab Drag0n</div>
+        </div>
+        <!-- <nav class="nav vertical-align"> -->
+        <nav class="nav">
+          <div class="tabs">
+            <div class="nav__item nav__left nav-active" data-slide="left">
               <!--TODO: change the dots dot class to nav button? -->
-              <button
-                class="dots__dot dot__left dark-dot"
-                data-slide="left"
-              ></button>
-            </li>
-            <li class="nav__item">
-              <button class="dots__dot dot__right" data-slide="right"></button>
-            </li>
-          </ul>
+              <span class="">Save</span>
+            </div>
+            <div class="nav__item nav__right" data-slide="right">
+              <span class="">My Collections</span>
+            </div>
+          </div>
         </nav>
       </header>
 
@@ -43,26 +47,27 @@
       </div> -->
 
       <div class="collections-save-menu">
-        <div class="title--container">
-          <h3 class="title">
-            <span class="primary-title">Save menu</span>
-            <span class="secondary-title section--hidden"
-              >Free up some space! Delete old collections if you want to save
-              more.</span
-            >
-          </h3>
+        <div class="title--container section--hidden">
+          <h4 class="title">
+            Free up some space!<br />
+            Delete old collections if you want to save any more.
+          </h4>
         </div>
         <div class="save-buttons">
           <div class="vert-element">
             <button class="btn--save btn--save-window">
-              <p>Entire Window</p>
+              <p>Save Session</p>
             </button>
           </div>
           <div class="vert-element">
-            <button class="btn--save btn--save-tabs"><p>Select tabs</p></button>
+            <button class="btn--save btn--save-tabs btn--disabled-perm">
+              <p>Select Tabs (Disabled)</p>
+            </button>
           </div>
           <div class="vert-element">
-            <button class="btn--save btn--save-url"><p>Save by URL</p></button>
+            <button class="btn--save btn--save-url btn--disabled-perm">
+              <p>Save by URL (Disabled)</p>
+            </button>
           </div>
         </div>
         <!-- TODO :: put the ul elements here -- outside of the js.  -->
@@ -90,7 +95,7 @@
 
       <div class="collections-confirm-menu section--hidden">
         <div class="title--container">
-          <h3 class="title">Confirm Tabs for Save</h3>
+          <h4 class="title">Confirm Tabs for Save</h4>
         </div>
         <ul class="tabs--confirm-save list--preview"></ul>
         <!-- <li></li> -->
@@ -100,7 +105,7 @@
             class="name--confirm-save"
             name=""
             id=""
-            placeholder="Name your tab collection"
+            placeholder="Name this tab collection"
           />
           <button class="btn--confirm-save">
             <p class="">Save Collection</p>
@@ -109,9 +114,6 @@
       </div>
 
       <div class="collections-display-menu section--hidden">
-        <div class="title--container">
-          <h3 class="title">My Collections</h3>
-        </div>
         <ul class="collections--display list--preview"></ul>
         <!-- <ul class="collections--display list--preview">
           <li class="collection--item list--preview-item">
@@ -127,7 +129,7 @@
 
       <footer class="footer">
         <div class="manage--options vertical-align">
-          <a class="manage__link" href="#">View & Manage Collections</a>
+          <a class="manage__link" href="#">Manage Collections</a>
         </div>
       </footer>
     </div>

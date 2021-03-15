@@ -1,194 +1,281 @@
+:root {
+  --color-aqua-dull: #9fcfc3;
+
+  --color-aqua: #48f1cd;
+  --color-aqua-focus: #e6fffc;
+  --color-aqua-muted: #f2fffc;
+  /* --color-aqua-muted: #6fffdd1a; */
+  --color-aqua-dark: #03cea2;
+  --color-aqua-dark-1: #00e0b0;
+  --color-aqua-dark-2: #13aa89;
+  --color-aqua-disabled: #597e748e;
+
+  --color-purps-light: rgb(196, 132, 255);
+  --color-purps: blueviolet;
+
+  --color-red--2: rgb(216, 5, 5);
+  --color-red-muted: #ffe0e0;
+
+  --color-grey-light--1: #fdfdfd;
+  --color-grey-light--2: rgb(248, 247, 247);
+  --color-grey-light--3: rgb(231, 231, 231);
+  --color-grey-medium: rgb(158, 158, 158);
+  --color-grey-dark: #4a484a; /* color of all text  */
+}
 body {
-  /* *SET DIMENSIONS OF POPUP* */
-  width: 380px;
-  height: 320px;
+  /* *SET DIMENSIONS OF POPUP on body* */
+  height: 320px; /* popovers have a max height of 600px */
+  width: 360px;
+  padding: 0;
   margin: 0;
+  transition: all 0.5s;
+  color: var(--color-grey-dark);
 }
 .container {
-  /* width: 100%; */
-  /* height: 100%; */
+  height: 320px; /* popovers have a max height of 600px */
+  width: 360px;
   margin-top: 0;
 }
 
 .header {
-  background-color: rgb(238, 238, 238);
-  height: 4rem;
+  background-color: var(--color-grey-light--2);
+  padding: 1px;
+}
+.logo--wrap {
+  height: 2rem;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  border-bottom: 1px solid var(--color-grey-light--3);
 }
 .nav {
+  height: 2rem;
+  margin: 0;
+  border-bottom: 2px solid var(--color-aqua-dark);
 }
-.nav ul {
-  /* margin-left: -2.3rem; */
+.nav-warning {
+  border-bottom-color: var(--color-red--2);
+}
+.nav .tabs {
+  height: 2rem;
+  display: flex;
+  justify-content: flex-start;
   background-color: transparent;
-  padding: 0;
   text-align: center;
   margin: 0;
+  padding: 0px;
 }
-.nav li {
-  display: inline-block;
-  list-style: none;
-}
-.dots__dot {
-  border: none;
-  background-color: #b9b9b9;
-  opacity: 0.7;
-  margin: 0 2rem;
-  height: 1rem;
-  width: 1rem;
-  border-radius: 50%;
+.nav__item {
+  padding: 0px;
+  padding: 8px 0px 8px 16px;
   cursor: pointer;
-  transition: all 0.5s;
-
-  /* Only necessary when overlying images */
-  /* box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.7); */
-}
-.dark-dot {
-  background-color: #8d8d8d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 24px;
+  color: rgb(158, 158, 158);
 }
 
-.title--container {
-  text-align: center;
+/* from honey */
+.nav-active {
+  color: var(--color-grey-dark);
+}
+.nav-active::after {
+  width: 24px;
+  content: '';
+  display: block;
+  margin: 9px auto;
+  border-bottom: 2px solid rgb(0, 0, 0);
 }
 
+/* ////////////////////////////////////////// */
+/* SECTION 1: Collections Save Menu --START-- */
+/* ////////////////////////////////////////// */
 .collections-save-menu {
-  /* position: relative; */
-  padding: 0rem 0;
+  margin-top: -1px;
+  background-color: var(--color-grey-light--1);
+  padding: 0;
 }
-.save-buttons {
+.title--container {
+  margin: 0;
+  padding: 0.55rem;
   text-align: center;
+  background-color: var(--color-aqua-muted);
+  border-bottom: 2px solid var(--color-aqua-dark);
+}
+.title-container-warning {
+  background-color: var(--color-red-muted);
+  border-bottom: 2px solid var(--color-red--2);
+}
+.title {
+  background-color: transparent;
+  margin: 0;
 }
 
+.save-buttons {
+  padding: 1rem 0;
+  text-align: center;
+  background-color: transparent;
+}
+/* could use flex-box */
 .btn--save {
   display: table-cell;
   vertical-align: middle;
-  margin: 0.2rem 0;
-  width: 100%;
+  margin: 0.35rem 0;
+  width: 85%;
   height: 3rem;
   text-align: center;
+  border-radius: 5px;
 
-  border-radius: 1px;
+  border: 1px solid var(--color-aqua-dull);
+  background-color: transparent;
+  color: var(--color-aqua-dark-2);
+  font-weight: 600;
 }
-.btn--save p {
-  text-align: center;
+
+.btn--save:hover {
+  background-color: var(--color-aqua-muted);
+  border-color: var(--color-aqua-dark);
 }
 
 .btn--disabled {
   pointer-events: none;
-  background-color: aqua;
+  border: 1px solid var(--color-aqua-disabled);
+  color: var(--color-aqua-disabled);
 }
+/* * These are disabled for now... * */
+/* .btn--save-tabs, btn--save-url */
+.btn--disabled-perm {
+  pointer-events: none;
+  border: 1px solid var(--color-aqua-disabled);
+  color: var(--color-aqua-disabled);
+}
+/* ////////////////////////////////////////// */
+/* SECTION 1: Collections Save Menu --END-- */
+/* ////////////////////////////////////////// */
 
+/* ////////////////////////////////////////// */
+/* SECTION 2: List component --START-- */
+/* ////////////////////////////////////////// */
 .list--preview {
-  /* margin-left: -2.3rem; */
   padding: 0;
-  text-align: center;
   margin: 0;
+  text-align: center;
   height: 300px;
   overflow-y: auto;
 }
 .list--preview li {
-  background-color: #f5f5f5;
-  padding: 1.3rem 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--color-grey-light--3);
+  height: 3rem;
   list-style: none;
+  position: relative;
 }
 .list--preview li:hover {
-  background-color: #e9e9e9;
+  background-color: var(--color-grey-light--2);
+  color: var(--color-purps);
 }
+/* note: list--preview-item === list--preview li */
 .list--preview-item p {
-  /* pointer-events: none; */
+  margin: 0;
+  padding: 0;
   font-size: 1.05rem;
   text-decoration: none;
-  color: rgb(36, 36, 36);
 }
-.list--preview-item p:hover {
-  color: blueviolet;
+.list--preview-item .collection-size {
+  margin-left: 0.1rem;
 }
+
 .btn--delete {
-  margin-left: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-grey-medium);
+  background-color: transparent;
+  border: none;
+  width: 2.5rem;
+  height: 3rem;
+  margin: 0;
+  top: 0;
+  right: 0rem;
+  position: absolute;
 }
+.btn--delete:hover {
+  color: var(--color-red--2);
+}
+/* ////////////////////////////////////////// */
+/* SECTION 2: List component --END-- */
+/* ////////////////////////////////////////// */
 
-/* .form--confirm-save:hover {
-  background-color: rgb(137, 243, 208);
-} */
-
-/** EXPERIMENTAL BETWEEN THESE POINTS*/
+/* ////////////////////////////////////////// */
+/* SECTION 3: Confirm Menu --START-- */
+/* ////////////////////////////////////////// */
 /******************************/
 .form--confirm-save {
+  height: 2rem;
   text-align: center;
   display: flex;
-  /* padding-top: 0.05rem; */
   padding-top: 0rem;
-  /* margin-top: 0rem; */
-  /* margin-top: 0.01rem; */
-  /* height: 0px; */
-  /* width: 100%; */
+  border-top: 1px solid var(--color-aqua-dull);
 }
 .form--confirm-save input {
   flex: 1;
   text-align: center;
-  height: 2rem;
-  border-width: 0;
+  height: 1.9rem;
   background-color: transparent;
-  /* border-color: rgb(236, 236, 236); */
   outline: none;
   box-shadow: none;
-  /* margin-bottom: -0.1rem; */
+  border-width: 0px;
+  border-right: 1px solid var(--color-brand-1);
 }
 
 .form--confirm-save input:focus,
 .form--confirm-save input:active {
-  background-color: #3131314f;
+  background-color: var(--color-aqua-focus);
   outline: none;
-  /* height: 2rem; */
   box-shadow: none;
-  border-width: 0;
-  /* margin-bottom: -0.2rem; */
 }
 .btn--confirm-save {
-  background-color: rgb(120, 250, 207);
+  background-color: var(--color-aqua);
   border-width: 0.15rem;
-  border-color: rgb(120, 250, 207);
-  color: #3a3a3a;
+  color: var(--color-grey-dark);
   flex: 0.5;
   text-align: center;
-  height: 2.1rem;
-  /* padding-bottom: 0.13rem; */
-  border-style: solid;
+  height: 2rem;
   border-width: 0;
-  /* margin-top: 0.01rem; */
-  /* padding-bottom: 0.3rem; */
 }
-
 .btn--confirm-save:hover {
-  background-color: rgb(7, 223, 151);
-  border-color: rgb(7, 223, 151);
-  color: #000000;
+  background-color: var(--color-aqua-dark-1);
 }
-
 .btn--confirm-save:focus {
   outline: none;
-
   border-width: 0.15rem;
-  border-color: rgba(1, 43, 30, 0.774);
+  border-color: var(--color-aqua-dark-2);
 }
 .btn--confirm-save:active {
   outline: none;
-
   border-width: 0.15rem;
-  border-color: rgba(1, 121, 83, 0.774);
+  border-color: var(--color-aqua-dark-2);
 }
 .form--confirm-save p {
-  font-size: 1.05rem;
-  font-weight: 400;
-  margin: auto;
-  /* padding: auto; */
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
 }
-/******************************/
-/** EXPERIMENTAL BETWEEN THESE POINTS*/
+/* ////////////////////////////////////////// */
+/* SECTION 3: Confirm Menu --END-- */
+/* ////////////////////////////////////////// */
 
-/** FOOTER **/
+/* ////////////////////////////////////////// */
+/* SECTION 4: Footer --START-- */
+/* ////////////////////////////////////////// */
 .footer {
   margin-top: 0;
   height: 4rem;
-  background-color: aliceblue;
+  background-color: var(--color-grey-light--2);
+  border-top: 1px solid var(--color-aqua-dull);
 }
 .manage--options {
   /* centered using second answer from:
@@ -197,12 +284,15 @@ body {
 }
 .manage__link {
   text-decoration: none;
-  color: blue;
+  color: var(--color-grey-dark);
 }
 .manage__link:hover {
   text-decoration: underline;
-  color: chartreuse;
+  color: var(--color-aqua-dark-2);
 }
+/* ////////////////////////////////////////// */
+/* SECTION 4: Footer --END-- */
+/* ////////////////////////////////////////// */
 
 /******************/
 /** POSITIONING **/
