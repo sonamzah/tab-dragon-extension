@@ -39,6 +39,7 @@ const goToConfirmMenu = function () {
   // Change left nav text content - 'Confirm'
   navigationView.displayTitleCofirm();
 
+  confirmSaveMenuView.focusInput(); // DOESNT WORK CURRENTLY
   confirmSaveMenuView.show();
   model.updateCurrentUI('confirmMenu'); // Update state.currentUI
 };
@@ -73,10 +74,12 @@ const controlNav = function (direction) {
   if (direction === 'right') goToCollectionsMenu();
 };
 
+//TODO! put in init?
 const controlOpenPopup = async function () {
   try {
     // 1. Initialize state - set model.state.collectionNames FROM storage.sync
     await model.initializeState();
+    console.log('openPop -- collectionNames: ', model.state.collectionNames);
     // 1.1 render those initialized names
     listCollectionView.render(model.state.collectionNames); // Render collection list in collection menu
 
@@ -96,7 +99,7 @@ const controlSaveByWindow = async function () {
     await model.allTabsFromWindow();
 
     // 2. Render tab list -- posibly move this into the goToConfirm funct later when adding more saveBy features
-    listTabView.render(model.state.selectedTabs.tabsArr);
+    listTabView.render(model.state.selectedTabs.tabs);
 
     // 3.1 Change left nav text content - 'Confirm'
     // navigationView.displayTitleCofirm();
@@ -178,7 +181,7 @@ const controlDeleteTab = function (dataId) {
   // Delete the tab from state using url as id
   model.deleteTab(dataId);
   // Re-render the listTabView
-  listTabView.render(model.state.selectedTabs.tabsArr);
+  listTabView.render(model.state.selectedTabs.tabs);
 };
 
 const controlDeleteCollection = async function (dataId) {
@@ -204,6 +207,11 @@ document
   .addEventListener('click', model.checkStorage);
 
 const init = function () {
+  // if (location.search !== '?focusHack') {
+  //   location.search = '?focusHack';
+  //   throw new Error(); // load everything on the next page;
+  // } // stop execution on this page
+
   navigationView.handleClickDot(controlNav);
   navigationView.handleArrowKey(controlNav);
 

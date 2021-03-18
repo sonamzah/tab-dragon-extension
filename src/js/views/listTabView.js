@@ -11,7 +11,7 @@ import { PREV_TITLE_LEN } from '../config.js';
 class ListTabView extends ListView {
   _parentElement = document.querySelector('.tabs--confirm-save');
 
-  // render must be called with model.state.selectedTabs.tabsArr
+  // render must be called with model.state.selectedTabs.tabs
   _generateMarkup() {
     return this._data.map(tab => this._generateMarkupList(tab, true)).join('');
   }

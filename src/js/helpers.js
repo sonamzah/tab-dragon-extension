@@ -1,6 +1,8 @@
 export const getDomain = function (url) {
   let domain = url.split('//');
   domain = domain[1].split('/');
+  if (domain[0].includes('www.') && domain[0][3] === '.')
+    return domain[0].split('www.')[1];
   return domain[0];
 };
 
@@ -8,8 +10,8 @@ export const getDomain = function (url) {
 export const truncToNumChars = function (str, length) {
   try {
     if (isNaN(length)) throw new Error('Argument (length) must be number');
-
-    return str.slice(0, length);
+    if (str.length > length) return str.slice(0, length) + '...';
+    return str;
   } catch (err) {
     console.error(err.message);
     throw err;

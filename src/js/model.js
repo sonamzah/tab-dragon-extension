@@ -14,13 +14,15 @@ export const state = {
     // byWindow: false,
     // byTab: false,
     // byUrl: false,
-    tabsArr: [],
+    tabs: [],
+    // tags: [],
   },
   collectionNames: [
     // {
     //   name: 'pocket-rocker',
-    //   tags: [],
-    //   size: null,
+    //   tags: [], // Not for save to storage
+    //   size: null, // Not for save to storage
+    //   favIconUrls: [], // Not for save to storage
     // },
     // {
     //   name: 'rekcor-tekcop',
@@ -66,21 +68,65 @@ export const updateCurrentUI = function (current) {
 // clearSyncStorage();
 //***************************/
 
+const getFavIconUrls = function (collection) {
+  return collection.map(tab => tab.favIconUrl);
+};
+// TODO! ****** MAKE each collection OBJ be an 1. ARRAY of tab objs 2. ARRAY of Tags
+// TODO! ***** collections = { name1:
+// TODO!                           { Tabs: [tabObj1, tabObj2],
+// TODO!                              Tags: [_,_,_]
+// TODO!                                    }}
+// TODO! ******** THEN NEED TO REFERENCE COLLECTIONS APPROPRIATELY IN ALL PLACES (SAVE, OPEN, DELETE)
+// TODO!        ANY place referencing or setting the *tabObjectS* array FROM STORAGE
+//generates the collectionNames array (containing CollectionDataObjs) from the collections saved to storage
+//NOTE :: this function mutates parameter/original array!!! (BC objects within array are being mutated)
+export const retrieveCollectionData = async function (collectionNames = []) {
+  try {
+    //TODO!!! ADD A CHECK TO SEE IF COLLECTION NAMES IS SAME SIZE AS STORAGE.length -1
+    // THROW ERROR AND CATCH IT INSIDE INITIALIZE
+    const storage = await getCollection(null); // All items in storage
+    console.log('storage: ', storage);
+    // 2. for each collection
+    const populatedNames = collectionNames.map(dataObj => {
+      // console.log('retrieve -- dataObj: ', dataObj);
+      const collection = storage[dataObj.name];
+
+      const newData = {
+        name: dataObj.name,
+        size: collection.length,
+        tags: [], // tags: collection.tags?,
+        favIconUrls: getFavIconUrls(collection),
+      };
+      // console.log('newData', newData);
+      return newData;
+    });
+    // console.log('popnames', populatedNames);
+    return populatedNames;
+  } catch (err) {
+    console.error(`💥 get collection names:  ${err.message}`);
+    throw err;
+  }
+};
+
 export const initializeState = async function () {
   try {
     console.log('im loading!');
-    const { collectionNames } = await getCollectionNames();
+    const { collectionNames } = await getCollectionNames(); // NEED THIS
+    console.log('initState -- collectionNames: ', collectionNames);
 
+    // console.log(await retrieveCollectionData(collectionNames));
     // await populateCollectionNames(); // Use this to reset collectionNames if accidentally deleted (in development) and then comment out line 83
 
     //TODO :: remove console.logs
     // TODO :: TEST TEST TEST THIS
     // TEST this by deleting everything then checking console
     if (!collectionNames || isEmpty(collectionNames))
+      // think i need this?
       // return or throw err -> welcome message(?)
-      return console.log('nothing in storage');
+      return console.log('nothing in storage'); // think i need this?
 
-    state.collectionNames = collectionNames;
+    // state.collectionNames = collectionNames; // NEED THIS?
+    state.collectionNames = await retrieveCollectionData(collectionNames);
     console.log(state.collectionNames);
 
     await updateStateStorageData();
@@ -103,6 +149,7 @@ export const updateStateStorageData = async function () {
   }
 };
 
+//TODO! rename save session
 //Promisified to handle the asynchronous behavior of chrome.tabs.query!
 export const allTabsFromWindow = function () {
   return new Promise((resolve, reject) => {
@@ -111,11 +158,14 @@ export const allTabsFromWindow = function () {
       //todo: reset these before setting this somehwere
       //   state.selectedTabs.byWindow = true;
 
+      // API passes tabs --an array of tab objects with many tabdata properties--
+      // into callback for processing
       chrome.tabs.query(
         { windowId: chrome.windows.WINDOW_ID_CURRENT },
         tabs => {
-          state.selectedTabs.tabsArr = tabs;
-          resolve(console.log('promise fulfilled bitch!'));
+          chrome.runtime.lastError
+            ? reject(new Error(chrome.runtime.lastError.message))
+            : resolve((state.selectedTabs.tabs = tabs));
           // console.log("state after tabs.query");
           //   console.log(state);
         }
@@ -149,54 +199,63 @@ const createTabDataObj = function (tabData) {
   };
 };
 // TODO -- next round -- add more metadata to sort the collections by! then you can use populateCollectionNames below
-const createCollectionDataObj = function (name, faviconUrls = [], tags = []) {
+const createCollectionDataObj = function (name, favIconUrls = []) {
   if (!name)
     return console.log('CreateCollectionDAtaObj -- Collection has no name wtf');
+  console.log(state.selectedTabs.tabs.length);
   //Will have to add some transfer limit checks for this too once tags are implemented (checkBytesPerItem())
   return {
     name,
-    faviconUrls,
-    tags,
-    size: state.selectedTabs.tabsArr.length,
+    tags: [],
+    size: state.selectedTabs.tabs.length,
+    favIconUrls,
   };
 };
 
 //TODO __ REMOVE THIS LATER (?)
 // needed this to get collectionNames back after accidentally deleting it... reason not use it is because
 // I dont want the order of data to be lost... if more meta-data is added later you can sort it always after populating
-const populateCollectionNames = async function () {
-  try {
-    console.log('inside populate');
-    const collections = await getCollection(null);
-    console.log(collections);
-    // .entries creates an array of key-val pairs: [ [key0,val0], [key1,val1],... ] note -- could use descrtucturing for more legibilty
-    const collectionNames = Object.entries(collections)
-      .filter(coll => {
-        const [key] = coll;
-        return key !== 'collectionNames';
-      })
-      .map(coll => {
-        const [key, val] = coll;
-        return { name: key, tags: [], size: val.length };
-        // coll[0];
-      });
-    // TODO connect this part when you reset storage -- want to be able to check if storage data is by tabdragon
-    //   .filter(
-    //     coll => coll[1].byTabDragon
-    //   )
-    //   .map(coll => {
-    //     const [key, val] = coll;
-    //     console.log(key);
-    //     return key;
-    //     // coll[0];
-    //   });
-    state.collectionNames = collectionNames;
-    // console.log(state.collectionNames);
-  } catch (err) {
-    throw err;
-  }
-};
+// const populateCollectionNames = async function () {
+//   try {
+//     console.log('inside populate');
+//     const collections = await getCollection(null);
+//     console.log(collections);
+//     // .entries creates an array of key-val pairs: [ [key0,val0], [key1,val1],... ] note -- could use descrtucturing for more legibilty
+//     const collectionNames = Object.entries(collections)
+//       .filter(coll => {
+//         const [key] = coll;
+//         return key !== 'collectionNames';
+//       })
+//       .map(coll => {
+//         const [key, val] = coll;
+//         return { name: key, tags: [], size: val.length };
+//         // coll[0];
+//       });
+//     // TODO connect this part when you reset storage -- want to be able to check if storage data is by tabdragon
+//     //   .filter(
+//     //     coll => coll[1].byTabDragon
+//     //   )
+//     //   .map(coll => {
+//     //     const [key, val] = coll;
+//     //     console.log(key);
+//     //     return key;
+//     //     // coll[0];
+//     //   });
+//     state.collectionNames = collectionNames;
+//     // console.log(state.collectionNames);
+//   } catch (err) {
+//     throw err;
+//   }
+// };
 
+// different from getCollectionNames -- extract returns an array containing only collection names and no other data.
+const extractCollectionNames = function () {
+  return state.collectionNames.map(dataObj => {
+    return { name: dataObj.name };
+  });
+  // Note -- if you really want to save space dont return the array of objects, just the strings - dataObj.name
+  // Note -- youd have to make changes to the way its accessed in retrieveCollectionData
+};
 export const saveCollection = async function (name, confirmed) {
   try {
     // State.collection names should be updated from chrome.storage on load
@@ -227,23 +286,17 @@ export const saveCollection = async function (name, confirmed) {
       throw err;
     }
     //----------GAURD CLAUSES END--------------
-    //todo! 1. save and commit and push the UI changes
-    //todo! 4. delete collections see if it works correctly
-    //todo! 3. do this stuff
-    //TODO! MAKE ARRAY WITH FAVICONS URLS FROM STATE.SELECTEDTABS.TABSARRAY
-    //TODO:  PASS IT INTO createCollectionDataObj()
-    //todo! -- create a get/populate favicons from 1) tab 2) collection (first 3) -- both return array so that the generate markup can handle them the same
-    //todo! ^^ maybe not? as simple as getting favicons in state for both. creating an array of favicons with ternary? in listview.. then `${}` programatically creating img elements in markup? i think yes
-    const { tabsArr } = state.selectedTabs; // Tab data from current session
 
-    //todo: working on the below!
-    // 1nnerest. Create array of favicons to pass into createCollectionDataObj()
-    // const faviconsUrls = tabsArr.map(tab => tab.favIconUrl);
-    // console.log(faviconsUrls);
+    const { tabs } = state.selectedTabs; // Tab data from current session
 
+    // 1est. Create array of favicons to pass into createCollectionDataObj()
+    // const favIconUrls = tabs.map(tab => tab.favIconUrl);
+    const favIconUrls = getFavIconUrls(tabs);
+    console.log('favIconUrls -- ', favIconUrls);
     // 1. save the name of the collection saved for access to display on load browser action
-    const collectionData = createCollectionDataObj(name);
+    const collectionData = createCollectionDataObj(name, favIconUrls); //TODO -- add tags
     state.collectionNames.push(collectionData);
+    console.log(state.collectionNames); // test
 
     // 1.1 create a mask from collection names with which to delete duplicates
     const arrayMask = state.collectionNames
@@ -260,11 +313,14 @@ export const saveCollection = async function (name, confirmed) {
     // const collectionNames = await getCollectionNames().push(collectionData);
     // await setStorage({ collectionNames: collectionNames });
 
+    // console.log('extractCollectionNames: ', extractCollectionNames());
+
     // 2. put updated state.collectionNames in storage
-    await setStorage({ collectionNames: state.collectionNames });
+    await setStorage({ collectionNames: extractCollectionNames() });
+    // await setStorage({ collectionNames: state.collectionNames }); //old way
 
     // 3. Configure tab data for collection-to-be-saved
-    const value = tabsArr.map(tab => createTabDataObj(tab));
+    const value = tabs.map(tab => createTabDataObj(tab)); // array of tab data Obj
 
     // 3.1 setStorage returns the name of the saved tabset/collection
     await setStorage({ [name]: value }); // use computed property name [name]}
@@ -279,9 +335,8 @@ export const saveCollection = async function (name, confirmed) {
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-
 // NOTE :: This only returns one collection (by name) at at time.
-// Returns object of array of (tab) objects { name: [ {}, {}, {}, ... ] }
+// Returns object of array of (tab) objects { name: [ {}, {}, {}, ... ] } -- if null is passed in, all storage will be returned
 export const getCollection = async function (name) {
   try {
     return getStorage(name);
@@ -290,7 +345,7 @@ export const getCollection = async function (name) {
     throw err;
   }
 };
-
+// returns { collectionNames: [ {name: name1}, {name: name2}, {name: name3}, ... ] }
 export const getCollectionNames = async function () {
   try {
     return getStorage('collectionNames');
@@ -301,26 +356,26 @@ export const getCollectionNames = async function () {
 };
 
 // Returns array of urls from a collection's tab data
-export const getUrls = function (tabsData) {
-  return tabsData.map(tab => tab.url);
+export const getUrls = function (collection) {
+  return collection.map(tab => tab.url);
 };
 
 //Name is the key for data in storage
 export const openCollection = async function (name) {
   try {
     // 1. Use name to get collections tab data from storage.sync
-    const { [name]: tabsData } = await getCollection(name);
+    const { [name]: collection } = await getCollection(name);
     // 2. Extract urls from the stored tab data
-    const urlArray = getUrls(tabsData);
+    const urlArray = getUrls(collection);
     // 3. Create 'options' object with urlArray and other data stored @ save event
     //TODO :: save and load more options about the window object!
     // 4. Open window
-    //todo Promisify?
+    //TODO -- Promisify?
     chrome.windows.create({ url: urlArray }, chromeWin => {
       console.log('Opening worked!');
       console.log(chromeWin);
     });
-    return tabsData;
+    return collection;
   } catch (err) {
     console.error(`💥 Open Collection:  ${err.message}`);
     throw err;
@@ -329,43 +384,39 @@ export const openCollection = async function (name) {
 
 ////////////////////////////////////////////////////////////////////////////////////
 export const deleteTab = function (delUrl) {
-  // state.selectedTabs.tabsArr for each tab => if (tab.url === dataId)
   // 1. Get index of url to delete in the tabsArr
-  const delIndex = state.selectedTabs.tabsArr.findIndex(
-    tab => tab.url === delUrl
-  );
+  const delIndex = state.selectedTabs.tabs.findIndex(tab => tab.url === delUrl);
   // 2. Use splice to delete the specified url (parameter: delUrl)
-  state.selectedTabs.tabsArr.splice(delIndex, 1);
+  state.selectedTabs.tabs.splice(delIndex, 1);
 };
 
-// Todo:: deleteCollection(){}
 export const deleteCollection = async function (delName) {
   try {
     // 1. Delete collection from state.collectionNames
-    // 1.a Get index of url to delete in the tabsArr
+    // 1.a Get index of url to delete in the collectionNames Arr
     const delIndex = state.collectionNames.findIndex(
       collection => collection.name === delName
     );
     // 1.b Use splice to delete the specified collectionName (parameter: delName)
     state.collectionNames.splice(delIndex, 1);
     // testing
-    console.log('State.collectionNames');
-    console.log(state.collectionNames);
+    // console.log('State.collectionNames', state.collectionNames);
 
+    // todo! extract collectionNames
     // 2. Set storage.collectionNames = state.collectionNames (which just had collection delName deleted)
-    await setStorage({ collectionNames: state.collectionNames });
+    await setStorage({ collectionNames: extractCollectionNames() }); // [reduced to objects with ONLY .name property]
+    // await setStorage({ collectionNames: state.collectionNames }); // Old way
+
     //testing
-    console.log('storage.collectionNames');
     const collNames = await getCollectionNames();
-    console.log(collNames);
+    console.log('storage.collectionNames', collNames);
 
     // 3. Delete collection in question from storage.sync
     const check = await removeStorage(delName);
 
     await updateStateStorageData();
     //test
-    console.log('Deleted collection Name');
-    console.log(check);
+    console.log('Deleted collection Name', check);
 
     //test
     console.log('all contents in Storage');
@@ -381,25 +432,22 @@ export const deleteCollection = async function (delName) {
 };
 
 //////////////////////////////////////////////////////////////////
-//TODO:: remove export?
-export const collectionExists = function (name) {
+
+const collectionExists = function (name) {
   return state.collectionNames.some(collection => collection.name === name);
 };
 
+// Bytes of currently selected for save collection
 const collectionBytes = function (key) {
   // NOTE :: may need to change this when implementing get bytes
-  const size = calcBytes({ [key]: state.selectedTabs.tabsArr });
+  const size = calcBytes({ [key]: state.selectedTabs.tabs });
   return size;
 };
 
 // Returns true if object to be saved is greater or equal to the maximum
 // number of bytes that can be saved to chrome.storage.sync at a time
 export const checkBytesPerItem = function (key) {
-  //   const keySize = calcBytes(key);
-  //   // NOTE :: may need to change this when implementing get bytes
-  //   const valSize = calcBytes(state.selectedTabs.tabsArr);
   const size = collectionBytes(key);
-
   if (size >= chrome.storage.sync.QUOTA_BYTES_PER_ITEM) return true;
 
   return false;

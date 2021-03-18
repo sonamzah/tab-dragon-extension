@@ -17,12 +17,13 @@ export default class View {
   }
 
   render(data, render = true) {
-    if (!data || (Array.isArray(data) && data.length === 0))
-      return console.log('error rendering');
+    let markup;
+    if (!data || (Array.isArray(data) && data.length === 0)) markup = '';
     //   return this.renderError();
-
-    this._data = data;
-    const markup = this._generateMarkup();
+    else {
+      this._data = data;
+      markup = this._generateMarkup();
+    }
 
     if (!render) return markup;
 

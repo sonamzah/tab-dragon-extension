@@ -10,6 +10,13 @@ import { PREV_TITLE_LEN } from '../config.js';
 class ConfirmSaveMenuView extends MenuView {
   _parentElement = document.querySelector('.collections-confirm-menu');
 
+  focusInput() {
+    document.getElementById('name-input').focus();
+    document.getElementById('name-input').select();
+    // this._parentElement.querySelector('.name--confirm-save').focus();
+    // this._parentElement.querySelector('.name--confirm-save').select();
+    // this._parentElement.querySelector('.name--confirm-save').click();
+  }
   getSaveName() {
     const name = this._parentElement.querySelector('.name--confirm-save').value;
     return name;

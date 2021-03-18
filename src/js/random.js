@@ -31,7 +31,7 @@ model.updateCurrentUI('collectionsMenu');
 
 //**************************** */
 //**************************** */
-confirmSaveMenuView.render(model.state.selectedTabs.tabsArr);
+confirmSaveMenuView.render(model.state.selectedTabs.tabs);
 // 3. Update state.currentUI
 model.updateCurrentUI('confirmMenu');
 //**************************** */

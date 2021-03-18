@@ -20,28 +20,70 @@ export default class ListView extends View {
     });
   }
 
+  //TODO ___ CLEAN THIS FUNCT UPPPP
+  // TODO:: add a way to view all or cycle through favicons of collections!
+  //note... pass in array of favicon urls
+  _generateFavIconMarkup(favicons) {
+    // Case: TAB list item -- NO favIconUrl: ""
+    if (favicons.length === 1 && !favicons[0]) {
+      //todo:: maybe need to still render empty img?
+      // console.log('NO favicon for this tab!');
+      return '';
+    }
+    // Case: COLLECTION list item -- display first 3 favicons(?)
+    if (favicons.length > 1) {
+      console.log('GETTING FIRST 3 favicons');
+      let counter = 0;
+      const fav = favicons
+        .filter(favicon => {
+          if (favicon) counter++;
+          return favicon && counter <= 3;
+        })
+        .map(favicon => {
+          // if(favicon)
+          return `<img class="favicons" src="${favicon}" alt="">`;
+        })
+        .join('');
+      if (!fav) return '';
+      return fav;
+    }
+    // Case: TAB list item -- YES favIconUrl EXISTS
+    // console.log(`TAB FAVICON: <img class="favicons" src="${favicons[0]}" alt="">`);
+    return `<img class="favicons" src="${favicons[0]}" alt="">`;
+  }
+
   // NOTE ::  when tab is true this method creates markup for a list of tab items
   // -- when false, for a list of collection items
-  // supply a single arg of tabData (model.state.selectedTabs.tabsArr[i]) or collection data (model.state.collectionNames[i])
+  // supply a single arg of tabData (model.state.selectedTabs.tabs[i]) or collection data (model.state.collectionNames[i])
   //   todo put make the arguments an options object?
   _generateMarkupList(itemData, tab = true) {
     const liClass = tab ? 'tab--item' : 'collection--item';
     const dataId = tab ? itemData.url : itemData.name;
-    const spanTitle = tab ? itemData.url : '';
-    const pClass = tab ? 'tab--url' : 'collection-name';
-    // ${truncToNumChars( getDomain(url), PREV_TITLE_LEN) -- truncate the names when your ready to render them
-    const pText = tab ? getDomain(itemData.url) : itemData.name;
+    const collapse = tab ? '.section--collapse-width' : '';
+    const favicons = tab ? [itemData?.favIconUrl] : itemData?.favIconUrls;
     const collectionSize = tab
       ? ''
       : `<span class="collection-size" title=""> ${itemData?.size}</span>`;
+    const spanTitle = tab ? itemData.url : '';
+    const pClass = tab ? 'tab--url' : 'collection-name';
+    // ${truncToNumChars( getDomain(url), PREV_TITLE_LEN) -- truncate the names when your ready to render them
+    const pText = tab
+      ? truncToNumChars(getDomain(itemData.url), PREV_TITLE_LEN)
+      : truncToNumChars(itemData.name, PREV_TITLE_LEN);
+
     const btnClass = tab ? 'tab' : 'collection';
 
     const markup = `
         <li class="${liClass} list--preview-item" data-id="${dataId}">
-          <span title="${spanTitle}">
+          <div class="container--info">
+            <span class="collection-size ${collapse}">${collectionSize}</span>
+            <span class="container--favicons">
+              ${this._generateFavIconMarkup(favicons)}
+            </span>
+          </div>
+          <div class="container--name" title="${spanTitle}">
             <p class="${pClass} list--preview-item__text inline-element">${pText}</p>
-            <span class="collection-size">${collectionSize}</span>
-          </span>
+          </div>
           <button class="btn--delete btn--delete-${btnClass}">&times;</button>
         </li>
         `;
