@@ -557,9 +557,8 @@ export const checkStorageSpace = async function (key = '') {
     throw err;
   }
 };
-// TODO ::: Use collectionBytes in this funct and pass in optional argument(?)
+
 //*********************************** */
-//TODO :::::******** ADD STORAGE BYTES TO STATE AND UPDATE IT EVERY SAVE AND DEL ***********
 
 ///////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////

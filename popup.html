@@ -55,7 +55,10 @@
         </div>
         <div class="save-buttons">
           <div class="vert-element">
-            <button class="btn--save btn--save-window">
+            <button
+              class="btn--save btn--save-window"
+              title="Save all tabs in the current window"
+            >
               <p>Save Session</p>
             </button>
           </div>
@@ -100,14 +103,16 @@
         <ul class="tabs--confirm-save list--preview"></ul>
         <!-- <li></li> -->
         <form class="form--confirm-save">
+          <!-- NOTE :: autocomplete attribute may be deprecated/ overridden in future browsers -->
           <input
             type="text"
             class="name--confirm-save"
-            name=""
+            name="aName"
             id="name-input"
             placeholder="Name this tab collection"
             tabindex="1"
             autofocus
+            autocomplete="off"
           />
           <button class="btn--confirm-save">
             <p class="">Save Collection</p>

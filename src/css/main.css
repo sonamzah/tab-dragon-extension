@@ -132,7 +132,9 @@ body {
   font-weight: 600;
 }
 
-.btn--save:hover {
+.btn--save:hover,
+.btn--save:active,
+.btn--save:focus {
   background-color: var(--color-aqua-muted);
   border-color: var(--color-aqua-dark);
 }

@@ -39,9 +39,10 @@ const goToConfirmMenu = function () {
   // Change left nav text content - 'Confirm'
   navigationView.displayTitleCofirm();
 
-  confirmSaveMenuView.focusInput(); // DOESNT WORK CURRENTLY
   confirmSaveMenuView.show();
   model.updateCurrentUI('confirmMenu'); // Update state.currentUI
+
+  confirmSaveMenuView.focusInput(); // WORKS NOW!
 };
 //Handles saveActionMenuView.hide() and confirmSaveMenuView.hide()
 const goToCollectionsMenu = function () {
@@ -61,7 +62,7 @@ const goToCollectionsMenu = function () {
   model.updateCurrentUI('collectionsMenu'); // Update state.currentUI
 };
 
-//*************************************** */p [''''''''''''']
+//**************************************** */
 //todo:: figure out how to style the animated slide in
 //**************************************** */
 const controlNav = function (direction) {
@@ -171,10 +172,13 @@ const confirmDelMessage = function (item) {
   return confirm(`Delete this ${item}?`);
 };
 
+//TODO! add error message when all tabs are deleted from confirm save tabs --
+//TODO!  or prevent deleting when only on tab remains
 // Delete list items
 const controlDeleteTab = function (dataId) {
   // Render confirm-deletion-message -- exit deletion if canceled
-  //TODO -- instead of confirming -> make an undo button or a deletion history(?) -- store the deleted in an array until popup is closed then that dat will not persist!
+  //TODO -- instead of confirming -> make an undo button or a deletion history(?) --
+  //TODO -- store the deleted in an array until popup is closed then that dat will not persist!
   //   const userRes = confirmDelMessage('tab');
   //   if (!userRes) return;
 
@@ -202,16 +206,11 @@ const controlDeleteCollection = async function (dataId) {
   }
 };
 
-document
-  .querySelector('.manage__link')
-  .addEventListener('click', model.checkStorage);
+// document
+//   .querySelector('.manage__link')
+//   .addEventListener('click', model.checkStorage);
 
 const init = function () {
-  // if (location.search !== '?focusHack') {
-  //   location.search = '?focusHack';
-  //   throw new Error(); // load everything on the next page;
-  // } // stop execution on this page
-
   navigationView.handleClickDot(controlNav);
   navigationView.handleArrowKey(controlNav);
 
@@ -222,8 +221,7 @@ const init = function () {
 
   collectionsMenuView.handleOpen(controlOpenCollection);
 
-  // register save button
-  // using event delegation -- button doesnt exist at initialization
+  // register save button -- uses event delegation
   confirmSaveMenuView.handleConfirmSave(controlConfirmSave);
 
   listTabView.handleDeleteTab(controlDeleteTab);
