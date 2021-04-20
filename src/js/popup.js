@@ -155,9 +155,9 @@ const controlConfirmSave = async function (confirmed = false) {
   }
 };
 
-const controlOpenCollection = async function (name) {
+const controlOpenCollection = async function (name, incognito) {
   try {
-    const tabsOpened = await model.openCollection(name);
+    const tabsOpened = await model.openCollection(name, incognito);
     console.log('tabs opened from controlOpenCollection');
     console.log(tabsOpened);
   } catch (err) {

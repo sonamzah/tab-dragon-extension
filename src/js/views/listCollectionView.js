@@ -17,3 +17,5 @@ class ListCollectionView extends ListView {
 }
 
 export default new ListCollectionView();
+
+// TODO :: BUG -- when favicon url fails to load an error will be thrown? need to somehow return if img does not loag (try-catch?)

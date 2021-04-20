@@ -28,8 +28,12 @@ class CollectionsMenuView extends MenuView {
 
       console.log('inside handle open -- you clicked on collection:');
       console.log(collection.dataset.id);
+      // console.log(e);
+      // console.log('e.ctrlKey', e);
+      const incognito = e.metaKey;
+      console.log(incognito);
 
-      handler(collection.dataset.id);
+      handler(collection.dataset.id, incognito);
     });
   }
 

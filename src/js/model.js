@@ -361,7 +361,7 @@ export const getUrls = function (collection) {
 };
 
 //Name is the key for data in storage
-export const openCollection = async function (name) {
+export const openCollection = async function (name, incognito) {
   try {
     // 1. Use name to get collections tab data from storage.sync
     const { [name]: collection } = await getCollection(name);
@@ -371,7 +371,7 @@ export const openCollection = async function (name) {
     //TODO :: save and load more options about the window object!
     // 4. Open window
     //TODO -- Promisify?
-    chrome.windows.create({ url: urlArray }, chromeWin => {
+    chrome.windows.create({ url: urlArray, incognito }, chromeWin => {
       console.log('Opening worked!');
       console.log(chromeWin);
     });
