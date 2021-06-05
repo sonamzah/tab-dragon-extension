@@ -14,8 +14,6 @@ export default class ListView extends View {
       e.stopPropagation();
 
       const dataId = e.target.closest('.list--preview-item').dataset.id;
-      //   console.log('dataId extracted from handleDeleteCollection in list view');
-      //   console.log(dataId);
       handler(dataId);
     });
   }

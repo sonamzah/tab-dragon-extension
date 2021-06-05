@@ -23,7 +23,7 @@
   --color-grey-dark: #4a484a; /* color of all text  */
 }
 body {
-  /* *SET DIMENSIONS OF POPUP on body* */
+  /** SET DIMENSIONS OF POPUP on body **/
   height: 320px; /* popovers have a max height of 600px */
   width: 360px;
   padding: 0;
@@ -46,6 +46,15 @@ body {
   padding: 0.5rem 1rem;
   margin: 0;
   border-bottom: 1px solid var(--color-grey-light--3);
+}
+.logo--img {
+  width: 36px;
+}
+.logo--title {
+  color: var(--color-grey-medium);
+  font-size: large;
+  font-family: 'Lobster', cursive;
+  margin-left: 0.2rem;
 }
 .nav {
   height: 2rem;
