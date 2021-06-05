@@ -6,7 +6,7 @@
   "version": "1.0",
 
   "action": {
-    "default_icon": "./src/img/dragon32x32.png",
+    "default_icon": "./src/img/dragon/dragon (10).png",
     "default_popup": "popup.html"
   },
   "permissions": ["activeTab", "tabs", "storage"],

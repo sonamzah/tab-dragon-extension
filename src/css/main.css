@@ -8,7 +8,6 @@
   --color-aqua-dark: #03cea2;
   --color-aqua-dark-1: #00e0b0;
   --color-aqua-dark-2: #13aa89;
-  --color-aqua-disabled: #597e748e;
 
   --color-purps-light: rgb(196, 132, 255);
   --color-purps: blueviolet;
@@ -19,7 +18,9 @@
   --color-grey-light--1: #fdfdfd;
   --color-grey-light--2: rgb(248, 247, 247);
   --color-grey-light--3: rgb(231, 231, 231);
+  --color-grey-medium-light: #597e748e;
   --color-grey-medium: rgb(158, 158, 158);
+  --color-grey-medium-dark: rgb(150, 149, 149);
   --color-grey-dark: #4a484a; /* color of all text  */
 }
 body {
@@ -30,6 +31,7 @@ body {
   margin: 0;
   transition: all 0.5s;
   color: var(--color-grey-dark);
+  font-family: 'Nunito', sans-serif;
 }
 .container {
   height: 320px; /* popovers have a max height of 600px */
@@ -53,7 +55,9 @@ body {
 .logo--title {
   color: var(--color-grey-medium);
   font-size: large;
+  /* font-size: xx-large; */
   font-family: 'Lobster', cursive;
+  /* font-family: 'Nanum Pen Script', cursive; */
   margin-left: 0.2rem;
 }
 .nav {
@@ -92,7 +96,7 @@ body {
   width: 24px;
   content: '';
   display: block;
-  margin: 9px auto;
+  margin: 8px auto;
   border-bottom: 2px solid rgb(0, 0, 0);
 }
 
@@ -126,6 +130,9 @@ body {
   background-color: transparent;
 }
 /* could use flex-box */
+.btn {
+  font-family: 'Nunito', sans-serif;
+}
 .btn--save {
   display: table-cell;
   vertical-align: middle;
@@ -135,30 +142,33 @@ body {
   text-align: center;
   border-radius: 5px;
 
-  border: 1px solid var(--color-aqua-dull);
+  /* border: 1px solid var(--color-aqua-dull); */
+  border: 1px solid var(--color-grey-medium-light);
   background-color: transparent;
-  color: var(--color-aqua-dark-2);
+  /* color: var(--color-aqua-dark-2); */
+  color: var(--color-grey-medium-dark);
   font-weight: 600;
 }
 
 .btn--save:hover,
 .btn--save:active,
 .btn--save:focus {
+  color: var(--color-aqua-dark-2);
   background-color: var(--color-aqua-muted);
   border-color: var(--color-aqua-dark);
 }
 
 .btn--disabled {
   pointer-events: none;
-  border: 1px solid var(--color-aqua-disabled);
-  color: var(--color-aqua-disabled);
+  border: 1px solid var(--color-grey-medium-light);
+  color: var(--color-grey-medium-light);
 }
 /* * These are disabled for now... * */
 /* .btn--save-tabs, btn--save-url */
 .btn--disabled-perm {
   pointer-events: none;
-  border: 1px solid var(--color-aqua-disabled);
-  color: var(--color-aqua-disabled);
+  border: 1px solid var(--color-grey-medium-light);
+  color: var(--color-grey-medium-light);
 }
 /* ////////////////////////////////////////// */
 /* SECTION 1: Collections Save Menu --END-- */
@@ -268,7 +278,6 @@ body {
 /* ////////////////////////////////////////// */
 /* SECTION 3: Confirm Menu --START-- */
 /* ////////////////////////////////////////// */
-/******************************/
 .form--confirm-save {
   height: 2rem;
   text-align: center;
@@ -285,6 +294,7 @@ body {
   box-shadow: none;
   border-width: 0px;
   border-right: 1px solid var(--color-brand-1);
+  font-family: 'Nunito', sans-serif;
 }
 
 .form--confirm-save input:focus,
@@ -340,7 +350,7 @@ body {
 }
 .manage__link {
   text-decoration: none;
-  color: var(--color-grey-dark);
+  color: var(--color-grey-medium);
 }
 .manage__link:hover {
   text-decoration: underline;
