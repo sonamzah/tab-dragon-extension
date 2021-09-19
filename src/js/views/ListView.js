@@ -17,6 +17,12 @@ export default class ListView extends View {
       handler(dataId);
     });
   }
+  listBorderWarn() {
+    this._parentElement.classList.add('list--preview-warning');
+  }
+  listBorderUnwarn() {
+    this._parentElement.classList.remove('list--preview-warning');
+  }
 
   //TODO ___ CLEAN THIS FUNCT UPPPP
   // TODO:: add a way to view all or cycle through favicons of collections!

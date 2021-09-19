@@ -270,7 +270,7 @@ export const saveCollection = async function (name, confirmed) {
       );
 
     // b. Check if storage is too full to add collection
-    if (await checkStorageSpace(name))
+    if (await storageIsMaxed(name))
       // NOTE :: it would be cool if you could say how many... though you dont know how big data will be --- (pad it?)
       throw new Error(
         `Erm, storage is too full to save this collection. Try saving a smaller collection (by deleting some tabs) or deleting some of your existing collections.`
@@ -431,6 +431,40 @@ export const deleteCollection = async function (delName) {
   }
 };
 
+// TODO:: Delete this -- just used for tracking down the deleteCollection buggg
+// const butthole = async () => {
+//   const toDelete = [
+//     'scroon1',
+//     'scroon2',
+//     // '12eqwe',
+//     // '43233',
+//     // '43434',
+//     // 'qwe3r3',
+//     // 'aqwqe',
+//     // 'asdf',
+//     // 'asdfdsf',
+//     // 'asdss',
+//     // 'sdas',
+//     // 'hej',
+//     // 'hgfhf',
+//     // 'hghf',
+//     // 'sdfa',
+//   ];
+//   try {
+//     for (const item of toDelete) {
+//       const check = await removeStorage(item);
+//       console.log(`deleted: ${check}`);
+//     }
+//     await updateStateStorageData();
+//     //test
+//     console.log('all contents in Storage');
+//     const storageCheck = await getCollection(null);
+//     console.log(storageCheck);
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
+// butthole();
 //////////////////////////////////////////////////////////////////
 
 const collectionExists = function (name) {
@@ -453,8 +487,10 @@ export const checkBytesPerItem = function (key) {
   return false;
 };
 
+// Returns total Bytes held in Chrome.storage.sync
 const storageBytes = async function () {
   try {
+    // All collections
     const storage = await getCollection(null);
     const storageSize = calcBytes(storage);
     return storageSize;
@@ -533,9 +569,9 @@ const checkStorageMaxItems = async function () {
   }
 };
 
+//TODO :: Big IDEA -- add the Bytes in storage and number items to state? will this short circuit some of the check storage calls?
 //TODO :: DONT FORGET TO ADD the state -- storage bytes and update it when add/remove
-//TODO! change name to storageIsMaxed()
-export const checkStorageSpace = async function (key = '') {
+export const storageIsMaxed = async function (key = '') {
   try {
     const collectionSize = collectionBytes(key);
     console.log(
@@ -553,7 +589,7 @@ export const checkStorageSpace = async function (key = '') {
 
     return storageItemsCheck || storageBytesCheck;
   } catch (err) {
-    console.error(`💥 checkStorageSpace:  ${err.message}`);
+    console.error(`💥 storageIsMaxed:  ${err.message}`);
     throw err;
   }
 };

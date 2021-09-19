@@ -3,7 +3,7 @@
 
 export default class View {
   //   _titleElement = document.querySelector('.title');
-  _nav = document.querySelector('.nav');
+  _nav = document.querySelector('.nav'); //All views need acceess to nav -> should make a separate NAV View
   _data;
 
   hide() {

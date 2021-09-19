@@ -85,8 +85,11 @@ const controlOpenPopup = async function () {
     listCollectionView.render(model.state.collectionNames); // Render collection list in collection menu
 
     // 2 if there is NO storage space, disable buttons
-    if (await model.checkStorageSpace()) {
+    if (await model.storageIsMaxed()) {
       saveActionMenuView.disableSaveButtons();
+      listCollectionView.listBorderWarn();
+      //TODO -- add yellow/ orange semi full warning and a check for how many more tabs in a collection you can store.
+      //todo -- add this to this func, to save, and to delete (but opposite)
     }
   } catch (err) {
     console.log(`💥👾💥 Control Open Popup: ${err.message}`);
@@ -126,10 +129,12 @@ const controlConfirmSave = async function (confirmed = false) {
     confirmSaveMenuView.clearInput();
 
     // 2.2 if there is NO storage space, disable buttons
+    // TODO
     // (Alternative to this function check, One could use the storageSpace object
     // in model.state and write an explicit check this might be more clear to read and understand)
-    if (await model.checkStorageSpace()) {
+    if (await model.storageIsMaxed()) {
       saveActionMenuView.disableSaveButtons();
+      listCollectionView.listBorderWarn();
     }
 
     // 3. update list collections view with new model.state.collectionNames
@@ -199,8 +204,10 @@ const controlDeleteCollection = async function (dataId) {
     listCollectionView.render(model.state.collectionNames);
 
     // If there IS storage space, enable buttons
-    if (!(await model.checkStorageSpace()))
+    if (!(await model.storageIsMaxed())) {
       saveActionMenuView.enableSaveButtons(); // effectively does nothing if they are already enabled.
+      listCollectionView.listBorderUnwarn();
+    }
   } catch (err) {
     console.error(`💥 controlDeleteCollection:  ${err.message}`);
   }

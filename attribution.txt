@@ -1,0 +1,67 @@
+0 - Freepik
+1 - Icongeek26
+2 - Freepik
+3 - Freepik
+4 - Icongeek26
+5 - Freepik
+6 - Nikita Golubev
+7 - Nikita Golubev
+8 - Freepik
+9 - Freepik
+10 - Freepik
+
+***********************************
+IMPORTANT: TODO TEST NOTE --- switch to branch: v1-aesthetix-overhaul
+*************************************
+
+TODO use the following color pallete?
+title bar border -- spring green: #5EFC8D,
+button color -- wild-blue-yonder: #ADB2D3,
+dark parts of purplestuff? -- english-violet: #4C3B4D, (maybe add some opacity)
+
+coolors that go good with crimson dragon
+----
+purpls
+[english-violet: #4C3B4D, 
+wild-blue-yonder: #ADB2D3,
+dark-purple: #1F0322,
+middle-blue: #92DCE5,
+phthalto blue: #020887,
+dark-cornflower-blue: #334195
+independence: #484D6D (dark)
+
+
+greens/yellow/orage
+[spring green: #5EFC8D,
+yellow- for warn: #FFB20F,
+bright-yellow-crayla: #FFB238
+dark-yellow for warn: #EFA00B, (marigold)
+rajah: #FFAD69
+]
+
+
+random nice palette with some of the above:
+/* CSS HEX */
+--crimson: #d7263dff;
+--honey-yellow: #ffb20fff;
+--carolina-blue: #00a1e4ff;
+--spring-green: #5efc8dff;
+--english-violet: #443850ff;
+
+/* SCSS RGB */
+$crimson: rgba(215, 38, 61, 1);
+$honey-yellow: rgba(255, 178, 15, 1);
+$carolina-blue: rgba(0, 161, 228, 1);
+$spring-green: rgba(94, 252, 141, 1);
+$english-violet: rgba(68, 56, 80, 1);
+
+/* SCSS Gradient */
+$gradient-top: linear-gradient(0deg, #d7263dff, #ffb20fff, #00a1e4ff, #5efc8dff, #443850ff);
+$gradient-right: linear-gradient(90deg, #d7263dff, #ffb20fff, #00a1e4ff, #5efc8dff, #443850ff);
+$gradient-bottom: linear-gradient(180deg, #d7263dff, #ffb20fff, #00a1e4ff, #5efc8dff, #443850ff);
+$gradient-left: linear-gradient(270deg, #d7263dff, #ffb20fff, #00a1e4ff, #5efc8dff, #443850ff);
+$gradient-top-right: linear-gradient(45deg, #d7263dff, #ffb20fff, #00a1e4ff, #5efc8dff, #443850ff);
+$gradient-bottom-right: linear-gradient(135deg, #d7263dff, #ffb20fff, #00a1e4ff, #5efc8dff, #443850ff);
+$gradient-top-left: linear-gradient(225deg, #d7263dff, #ffb20fff, #00a1e4ff, #5efc8dff, #443850ff);
+$gradient-bottom-left: linear-gradient(315deg, #d7263dff, #ffb20fff, #00a1e4ff, #5efc8dff, #443850ff);
+$gradient-radial: radial-gradient(#d7263dff, #ffb20fff, #00a1e4ff, #5efc8dff, #443850ff);
